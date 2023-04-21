@@ -1,0 +1,96 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  role      Role     @default(customer)
+  createdAt DateTime @default(now())
+
+  UserInfo UserInfo?
+  Post     Post[]
+  Favorite PostFav[]
+  Comment  Comment[]
+}
+
+model UserInfo {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  username  String?   @unique
+  firstName String?
+  lastName  String?
+  phone     String?   @unique
+  address   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  User User @relation(fields: [userId], references: [id])
+}
+
+enum Role {
+  admin
+  customer
+}
+
+model PostFav {
+  id     String  @id @default(cuid())
+  userId String?
+  postId String?
+
+  User User? @relation(fields: [userId], references: [id])
+  Post Post? @relation(fields: [postId], references: [id])
+}
+
+model Post {
+  id     String     @id @default(cuid())
+  title  String
+  detail String
+  userId String
+  tagId  Int
+  status PostStatus @default(pending)
+
+  Tag     Tag?      @relation(fields: [tagId], references: [id])
+  User    User?     @relation(fields: [userId], references: [id])
+
+  UserFav PostFav[]
+  Comment Comment[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+}
+
+enum PostStatus {
+  approve
+  pending
+  noneApprove
+}
+
+model Tag {
+  id   Int    @id @default(autoincrement())
+  name String
+  Post Post[]
+}
+
+model Comment {
+  id       String @id @default(cuid())
+  content  String
+  authorId String
+  postId   String
+
+  post   Post @relation(fields: [postId], references: [id])
+  author User @relation(fields: [authorId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
