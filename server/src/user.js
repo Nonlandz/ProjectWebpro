@@ -4,6 +4,7 @@ const prisma = new PrismaClient();
 const router = express.Router();
 import bcypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { object, string, number, date } from "yup";
 
 const findEmail = async (email) => {
   return await prisma.user.findUnique({
@@ -16,7 +17,18 @@ const findEmail = async (email) => {
 router.post("/register", async (req, res) => {
   try {
     const { email, password } = req.body;
+
+    // validating
+    let userSchema = object({
+      email: string().email().required(),
+      password: string().required(),
+    });
+
+    await userSchema.validate(req.body);
+
+    // check email in database
     const checkEmail = await findEmail(email);
+
     if (checkEmail) {
       throw new Error("this email already exits");
     }
@@ -51,6 +63,14 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
+
+    // validating
+    let userSchema = object({
+      email: string().email().required(),
+      password: string().required(),
+    });
+
+    await userSchema.validate(req.body);
 
     const checkEmail = await findEmail(email);
 
