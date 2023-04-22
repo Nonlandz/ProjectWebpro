@@ -54,9 +54,16 @@ export default {
       },
     };
   },
+  mounted() {
+    this.checkAuth();
+  },
   methods: {
+    checkAuth() {
+      if (localStorage.getItem("token")) {
+        this.$router.push("/");
+      }
+    },
     async showAlert(type, text) {
-      // Use sweetalert2
       const Toast = await this.$swal.mixin({
         toast: true,
         position: "top-end",
@@ -79,7 +86,6 @@ export default {
         const result = await this.v$.$validate();
 
         if (!result) {
-          // notify user form is invalid
           throw new Error("Invalid data");
         }
 

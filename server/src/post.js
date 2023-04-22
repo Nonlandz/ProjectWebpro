@@ -3,6 +3,107 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 const router = express.Router();
 
-router.get("/")
+router.get("/", async (req, res) => {
+  try {
+    const posts = await prisma.post.findMany({
+      include: {
+        User: {
+          select: {
+            id: true,
+            UserInfo: true,
+          },
+        },
+        Tag: true,
+        Comment: true,
+        UserFav: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+    res.json(posts);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: error });
+  }
+});
+
+router.post("/", async (req, res) => {
+  try {
+    const post = await prisma.post.create({
+      data: {
+        title: req.body.title,
+        detail: req.body.detail,
+        userId: req.body.userId,
+        tagId: req.body.tagId,
+      },
+    });
+    res.json(post);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: error });
+  }
+});
+
+router.get("/fav", async (req, res) => {
+  try {
+    const fav = await prisma.postFav.findMany({
+      where: {
+        AND:[
+          {userId: req.body.userId},
+          {postId: req.body.postId}
+        ]
+      },
+      include: {
+        Post: {
+          include: {
+            User: {
+              select: {
+                id: true,
+                UserInfo: true,
+              },
+            },
+            Tag: true,
+            Comment: true,
+            UserFav: true,
+          },
+        },
+      },
+    });
+    res.json(fav);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: error });
+  }
+});
+
+router.post("/fav", async (req, res) => {
+  try {
+    const fav = await prisma.postFav.create({
+      data: {
+        userId: req.body.userId,
+        postId: req.body.postId,
+      },
+    });
+    res.json(fav);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: error });
+  }
+});
+
+router.delete("/fav/:id", async (req, res) => {
+  try {
+    const fav = await prisma.postFav.delete({
+      where: {
+        id: req.params.id,
+      },
+    });
+    res.json(fav);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: error });
+  }
+});
 
 export default router;

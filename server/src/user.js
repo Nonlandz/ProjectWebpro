@@ -96,4 +96,25 @@ router.post("/login", async (req, res) => {
   }
 });
 
+//get post
+router.get("/posts/:id", async (req, res) => {
+  try {
+    const posts = await prisma.user.findMany({
+      where: {
+        id: req.query.id,
+      },
+      include: {
+        Post: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    res.json(posts);
+  } catch (error) {
+    res.status(500).json({ error: error });
+  }
+});
+
 export default router;
