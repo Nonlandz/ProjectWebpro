@@ -80,8 +80,6 @@ router.post("/login", async (req, res) => {
 
     const checkPassword = await bcypt.compare(password, checkEmail.password);
 
-    console.log(checkPassword);
-
     if (!checkPassword) {
       throw new Error("password is not match");
     }
