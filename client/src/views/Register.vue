@@ -6,15 +6,21 @@
         <div class="w-full flex flex-col items-center gap-y-3">
           <div class="flex flex-col w-full">
             <label class="text-slate-600" for="username">Email</label>
-            <input type="email" name="email" id="email" class="border rounded-md w-full py-1 px-1"  v-model="data.email"/>
+            <input type="email" name="email" id="email" class="border rounded-md w-full py-1 px-1" v-model="data.email" />
           </div>
           <div class="flex flex-col w-full">
             <label class="text-slate-600" for="username">Password</label>
-            <input type="password" name="password" id="password" class="border rounded-md w-full py-1 px-1"  v-model="data.password"/>
+            <input type="password" name="password" id="password" class="border rounded-md w-full py-1 px-1" v-model="data.password" />
           </div>
           <div class="flex flex-col w-full">
             <label class="text-slate-600" for="username">Confirm Password</label>
-            <input type="password" name="confirmPassword" id="confirmPassword" class="border rounded-md w-full py-1 px-1"  v-model="data.confirmPassword"/>
+            <input
+              type="password"
+              name="confirmPassword"
+              id="confirmPassword"
+              class="border rounded-md w-full py-1 px-1"
+              v-model="data.confirmPassword"
+            />
           </div>
         </div>
         <button @click="register" class="bg-[#EB6648] text-white w-full rounded-md py-1.5">submit</button>
@@ -28,12 +34,16 @@
 
 <script>
 import Layout from "../components/Layout.vue";
+import axios from "axios";
+import useValidate from "@vuelidate/core";
+import { required, email, minLength } from "@vuelidate/validators";
 export default {
   components: {
     Layout,
   },
   data() {
     return {
+      v$: useValidate(),
       data: {
         email: "",
         password: "",
@@ -41,14 +51,66 @@ export default {
       },
     };
   },
-  onMounted() {},
+  validations() {
+    return {
+      data: {
+        email: {
+          required,
+          email,
+        },
+        password: {
+          required,
+          minLength: minLength(6),
+        },
+        confirmPassword: {
+          required,
+          minLength: minLength(6),
+        },
+      },
+    };
+  },
   methods: {
+    async showAlert(type, text) {
+      // Use sweetalert2
+      const Toast = await this.$swal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.addEventListener("mouseenter", this.$swal.stopTimer);
+          toast.addEventListener("mouseleave", this.$swal.resumeTimer);
+        },
+      });
+
+      Toast.fire({
+        icon: type,
+        title: text,
+      });
+    },
     async register() {
       try {
+        const result = await this.v$.$validate();
+
+        if (!result) {
+          // notify user form is invalid
+          throw new Error("Invalid data");
+        }
+
+        if (this.data.password !== this.data.confirmPassword) {
+          throw new Error("Passwords do not match");
+        }
+
         await axios.post("http://localhost:8080/api/user/register", this.data);
         this.$router.push("/login");
+        this.showAlert("success", "Successfully registered");
       } catch (error) {
-        console.log(error.response.data);
+        if (error?.response?.data?.message) {
+          this.showAlert("error", error?.response?.data?.message);
+        } else {
+          this.showAlert("error", error);
+        }
       }
     },
   },
