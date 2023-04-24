@@ -118,7 +118,7 @@ export default {
         tagId: "",
       },
       posts: [],
-      userId: JSON.parse(localStorage.getItem("user")).id,
+      userId: JSON.parse(localStorage.getItem("user"))?.id ?? null,
     };
   },
   mounted() {
