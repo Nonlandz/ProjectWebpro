@@ -11,6 +11,9 @@ const findEmail = async (email) => {
     where: {
       email: email,
     },
+    include:{
+      UserInfo: true
+    }
   });
 };
 
@@ -116,5 +119,47 @@ router.get("/posts/:id", async (req, res) => {
     res.status(500).json({ error: error });
   }
 });
+
+
+
+// user.js
+// ...
+
+router.put("/userinfo", async (req, res) => {
+  try {
+    const { userId, username, firstName, lastName, phone, address } = req.body;
+    
+    let userInfoSchema = object({
+      userId: string().required(),
+      username: string().required(),
+      firstName: string(),
+      lastName: string(),
+      phone: string(),
+      address: string()
+    });
+
+    await userInfoSchema.validate(req.body);
+
+    const updateUserInfo = await prisma.userInfo.update({
+      where: {
+        userId: userId
+      },
+      data: {
+        username: username,
+        firstName: firstName,
+        lastName: lastName,
+        phone: phone,
+        address: address,
+        updatedAt: new Date()
+      }
+    });
+    
+    res.json(updateUserInfo);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+// ...
 
 export default router;

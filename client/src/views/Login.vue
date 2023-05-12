@@ -82,26 +82,37 @@ export default {
       });
     },
     async login() {
-      try {
-        const result = await this.v$.$validate();
+  try {
+    const result = await this.v$.$validate();
 
-        if (!result) {
-          throw new Error("Invalid data");
-        }
+    if (!result) {
+      throw new Error("Invalid data");
+    }
 
-        const res = await axios.post("http://localhost:8080/api/user/login", this.data);
-        localStorage.setItem("user", JSON.stringify(res.data.user));
-        localStorage.setItem("token", res.data.accessToken);
-        this.$router.push("/");
-        this.showAlert("success", "Successfully registered");
-      } catch (error) {
-        if (error?.response?.data?.message) {
-          this.showAlert("error", error?.response?.data?.message);
-        } else {
-          this.showAlert("error", error);
-        }
-      }
-    },
+    const res = await axios.post("http://localhost:8080/api/user/login", this.data);
+    console.log(res.data);
+    localStorage.setItem("user", JSON.stringify(res.data.user));
+    localStorage.setItem("token", res.data.accessToken);
+    
+    // Check if user information is complete
+    console.log(res.data.user)
+    if (!res.data.user.UserInfo.username) {
+      // Redirect to userinfo page if user information is not complete
+      this.$router.push("/userinfo");
+      this.showAlert("info", "Please complete your user information.");
+    } else {
+      this.$router.push("/");
+      this.showAlert("success", "Successfully Login");
+    }
+  } catch (error) {
+    if (error?.response?.data?.message) {
+      this.showAlert("error", error?.response?.data?.message);
+    } else {
+      this.showAlert("error", error);
+    }
+  }
+},
+
   },
 };
 </script>

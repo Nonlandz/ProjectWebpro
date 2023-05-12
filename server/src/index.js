@@ -21,6 +21,7 @@ app.use(
   router.use("/comment", comment),
   router.use("/posts", post),
   router.use("/tags", tags)
+  
 );
 
 app.listen(PORT, () => {
