@@ -7,7 +7,6 @@
     </div>
     <div class="flex items-center gap-x-10 relative">
       <button class="material-icons-outlined text-red-500">favorite</button>
-      <div class="text-white mr-2">{{ userInfo }}</div>
       <button @click="dropdown = !dropdown" class="text-xl">menu</button>
     </div>
     <div class="absolute top-14 right-5 bg-white w-40 rounded-md" v-if="dropdown">
@@ -27,16 +26,6 @@ export default {
       dropdown: false,
     };
   },
-  computed: {
-  userInfo() {
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (user) {
-      return `${user.firstName}`;
-    }
-    return '';
-  },
-},
-
   methods: {
     logout() {
       localStorage.removeItem("token");

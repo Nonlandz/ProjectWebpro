@@ -78,32 +78,19 @@ router.post("/login", async (req, res) => {
       throw new Error("this email not have in database");
     }
 
-    // Include the userInfo in the response
-    const userInfo = await prisma.userInfo.findUnique({
-      where: {
-        userId: checkEmail.id,
-      },
-    });
-
     const checkPassword = await bcypt.compare(password, checkEmail.password);
 
     if (!checkPassword) {
       throw new Error("password is not match");
     }
 
-    // Combine the user and userInfo objects
-    const userWithInfo = {
-      ...checkEmail,
-      ...userInfo,
-    };
+    delete checkEmail.password;
 
-    delete userWithInfo.password;
-
-    const accessToken = jwt.sign(userWithInfo, process.env.TOKEN, {
+    const accessToken = jwt.sign(checkEmail, process.env.TOKEN, {
       expiresIn: "2h",
     });
 
-    res.json({ accessToken: accessToken, user: userWithInfo });
+    res.json({ accessToken: accessToken, user: checkEmail });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
