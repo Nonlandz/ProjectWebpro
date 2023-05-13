@@ -223,6 +223,8 @@ export default {
     this.checkAuth();
     this.getTag();
     this.getPost();
+    this.updatePostLikes(); // Update the likes for all posts
+    this.saveLikedPostsToLocalStorage(); //
   },
   methods: {
     async showAlert(type, text) {
@@ -297,19 +299,21 @@ export default {
     async getPost() {
       try {
         const res = await axios.get("http://localhost:8080/api/posts/");
-        this.posts = res.data.filter((post) => post.status == "approve");
-        this.posts.map(async (post) => {
+        const newPosts = res.data.filter((post) => post.status === "approve");
+        for (const post of newPosts) {
           const starsRef = storageRef(storage, "posts/" + post.id);
           const search = await listAll(starsRef);
-          if (search.items.length == 0) return;
+          if (search.items.length === 0) continue;
           const download = (await getDownloadURL(search.items[0])).toString();
           post.image = download;
-          this.checkLike(post);
-        });
+        }
+        this.posts.push(...newPosts); // Merge new posts with existing ones
+        // No need to call updatePostLikes here
       } catch (error) {
         console.log(error);
       }
     },
+
 
     async getTag() {
       try {
@@ -320,42 +324,77 @@ export default {
       }
     },
 
-   async like(post) {
+    async like(post) {
+      try {
+        const check = post.UserFav.find((fav) => fav.userId === this.userId);
+        if (check) {
+          // User has already liked the post, so remove the like
+          await axios.delete(`http://localhost:8080/api/posts/fav/${check.id}`);
+          post.UserFav = post.UserFav.filter((fav) => fav.userId !== this.userId); // Update the UserFav array for the post
+        } else {
+          // User hasn't liked the post, so add the like
+          const response = await axios.post(`http://localhost:8080/api/posts/fav/`, {
+            userId: this.userId,
+            postId: post.id,
+          });
+          const newFav = response.data; // The newly created UserFav object
+          post.UserFav.push(newFav); // Add the new UserFav to the UserFav array for the post
+        }
+        post.like = !post.like; // Toggle the like status for the post
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
+
+
+
+async getPostLikes(postId) {
   try {
-    const check = await axios.get(`http://localhost:8080/api/posts/fav?userId=${this.userId}&postId=${post.id}`);
-    if (check.data.length != 0) {
-      await axios.delete(
-        `http://localhost:8080/api/posts/fav/${check.data[0].id}`
-      );
-      post.UserFav = post.UserFav.filter((fav) => fav.userId != this.userId);
-    } else {
-      await axios.post(`http://localhost:8080/api/posts/fav/`, {
-        userId: this.userId,
-        postId: post.id,
-      });
-      post.UserFav.push({ userId: this.userId, postId: post.id });
-    }
-    this.checkLike(post);
+    const res = await axios.get(
+      `http://localhost:8080/api/posts/fav?postId=${postId}`
+    );
+    return res.data;
   } catch (error) {
     console.log(error);
+    return [];
   }
 },
 
 
 
-    async checkLike(post) {
+async updatePostLikes() {
       try {
-        const check = await axios.get("http://localhost:8080/api/posts/fav", {
-          params: {
-            userId: this.userId,
-            postId: post.id,
-          },
-        });
-        post.like = check.data[0]?.postId == post.id;
+        for (const post of this.posts) {
+          // No need to call getPostLikes here
+          post.UserFav = await this.getPostLikes(post.id); // Update the likes for each post
+        }
       } catch (error) {
         console.log(error);
       }
     },
+
+saveLikedPostsToLocalStorage() {
+      const likedPostIds = this.posts.reduce((ids, post) => {
+        if (post.UserFav.some((fav) => fav.userId === this.userId)) {
+          ids.push(post.id);
+        }
+        return ids;
+      }, []);
+      localStorage.setItem('likedPosts', JSON.stringify(likedPostIds));
+    },
+
+
+    loadLikedPostsFromLocalStorage() {
+      const likedPostIds = JSON.parse(localStorage.getItem('likedPosts')) || [];
+      for (const post of this.posts) {
+        post.like = likedPostIds.includes(post.id);
+      }
+    },
+
+
+
+
 
     async filterTag(tagId) {
       try {

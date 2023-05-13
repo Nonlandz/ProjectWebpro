@@ -1,5 +1,4 @@
 import { createRouter, createWebHashHistory } from "vue-router";
-
 const routes = [
   {
     path: "/",
@@ -32,6 +31,7 @@ const routes = [
     name: "userinfo",
     component: () => import("../components/userinfo.vue"),
   },
+
 ];
 
 const router = createRouter({
