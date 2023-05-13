@@ -1,4 +1,5 @@
 import { createRouter, createWebHashHistory } from "vue-router";
+import MyFav from '../views/MyFav.vue';
 const routes = [
   {
     path: "/",
@@ -32,6 +33,14 @@ const routes = [
     component: () => import("../components/userinfo.vue"),
   },
 
+
+  {
+    path: "/myfav",
+    name: "MyFav",
+    component: () => import("../views/MyFav.vue"),
+  },
+
+  
 ];
 
 const router = createRouter({

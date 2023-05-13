@@ -6,7 +6,7 @@
       <i class="material-icons-outlined absolute left-2 text-black">search</i>
     </div>
     <div class="flex items-center gap-x-10 relative">
-      <button class="material-icons-outlined text-red-500">favorite</button>
+      <button @click="this.$router.push('/myfav')" class="material-icons-outlined text-red-500">favorite</button>
       <span class="px-5"> {{ getUsername() }}</span>
       <button @click="dropdown = !dropdown" class="text-xl">menu</button>
     </div>
@@ -30,10 +30,9 @@ export default {
   },
   methods: {
     getUsername() {
-  const user = JSON.parse(localStorage.getItem('user'));
-  return user && user.UserInfo && user.UserInfo.username ? user.UserInfo.username : '';
-},
-
+      const user = JSON.parse(localStorage.getItem('user'));
+      return user && user.UserInfo && user.UserInfo.username ? user.UserInfo.username : '';
+    },
 
     logout() {
       localStorage.removeItem("token");

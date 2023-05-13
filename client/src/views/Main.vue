@@ -397,16 +397,27 @@ saveLikedPostsToLocalStorage() {
 
 
     async filterTag(tagId) {
-      try {
-        await this.getPost();
-        if (tagId != "all") {
-          const filter = this.posts.filter((post) => post.tagId == tagId);
-          this.posts = filter;
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    },
+  try {
+    console.log('Selected tag:', tagId); // Log the selected tag
+    const res = await axios.get("http://localhost:8080/api/posts/"); // Fetch all posts from the server
+    let newPosts = res.data.filter((post) => post.status === "approve");
+    for (const post of newPosts) {
+      const starsRef = storageRef(storage, "posts/" + post.id);
+      const search = await listAll(starsRef);
+      if (search.items.length === 0) continue;
+      const download = (await getDownloadURL(search.items[0])).toString();
+      post.image = download;
+    }
+    if (tagId !== "all") {
+      // Filter posts based on tagId
+      newPosts = newPosts.filter((post) => post.Tag.id === +tagId);
+    }
+    this.posts = newPosts; // replace existing posts with newPosts
+  } catch (error) {
+    console.log(error);
+  }
+},
+
 
     checkAuth() {
       !localStorage.getItem("token") && this.$router.push("/login");

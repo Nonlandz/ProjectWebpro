@@ -77,6 +77,42 @@ router.get("/fav", async (req, res) => {
   }
 });
 
+
+router.get("/fav/user/:userId", async (req, res) => {
+  try {
+    const userId = req.params.userId;
+
+    const favPosts = await prisma.postFav.findMany({
+      where: {
+        userId: userId,
+      },
+      include: {
+        Post: {
+          include: {
+            User: {
+              select: {
+                id: true,
+                UserInfo: true,
+              },
+            },
+            Tag: true,
+            Comment: true,
+            UserFav: true,
+          },
+        },
+      },
+    });
+
+    res.json(favPosts);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: error });
+  }
+});
+
+
+
+
 router.post("/fav", async (req, res) => {
   try {
     const fav = await prisma.postFav.create({
