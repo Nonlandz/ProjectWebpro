@@ -7,8 +7,10 @@
     </div>
     <div class="flex items-center gap-x-10 relative">
       <button class="material-icons-outlined text-red-500">favorite</button>
+      <span class="px-5"> {{ getUsername() }}</span>
       <button @click="dropdown = !dropdown" class="text-xl">menu</button>
     </div>
+  
     <div class="absolute top-14 right-5 bg-white w-40 rounded-md" v-if="dropdown">
       <div class="flex flex-col items-start gap-y-2 text-black py-5">
         <button class="px-5 hover:bg-slate-200 w-full text-left">profile</button>
@@ -27,6 +29,12 @@ export default {
     };
   },
   methods: {
+    getUsername() {
+  const user = JSON.parse(localStorage.getItem('user'));
+  return user && user.UserInfo && user.UserInfo.username ? user.UserInfo.username : '';
+},
+
+
     logout() {
       localStorage.removeItem("token");
       localStorage.removeItem("user");

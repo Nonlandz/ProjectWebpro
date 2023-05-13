@@ -322,12 +322,7 @@ export default {
 
    async like(post) {
   try {
-    const check = await axios.get("http://localhost:8080/api/posts/fav", {
-      params: {
-        userId: this.userId,
-        postId: post.id,
-      },
-    });
+    const check = await axios.get(`http://localhost:8080/api/posts/fav?userId=${this.userId}&postId=${post.id}`);
     if (check.data.length != 0) {
       await axios.delete(
         `http://localhost:8080/api/posts/fav/${check.data[0].id}`
@@ -345,6 +340,7 @@ export default {
     console.log(error);
   }
 },
+
 
 
     async checkLike(post) {

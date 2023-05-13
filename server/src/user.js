@@ -156,7 +156,13 @@ router.put("/userinfo", async (req, res) => {
     
     res.json(updateUserInfo);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    if (error.code === 'P2002') {
+      let field = error.meta.target.includes('phone') ? 'phone' : 'username';
+      res.status(409).json({ message: `${field} already exists` }); // Sending the error to frontend
+    } else {
+      // Handle other types of errors
+      res.status(500).json({ message: 'An unexpected error occurred' });
+    }
   }
 });
 
