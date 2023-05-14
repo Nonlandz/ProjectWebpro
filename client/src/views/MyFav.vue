@@ -117,6 +117,9 @@ export default {
                     await axios.delete(`http://localhost:8080/api/posts/fav/${userLike.id}`);
                     post.UserFav = post.UserFav.filter((fav) => fav.userId !== this.userId);
                 }
+                else {
+                    const response = await axios.post(`http://localhost:8080/api/posts/fav/`, {
+                        userId: this.userId,
                         postId: post.id,
                     });
                     const newFav = response.data;
