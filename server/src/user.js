@@ -11,9 +11,9 @@ const findEmail = async (email) => {
     where: {
       email: email,
     },
-    include:{
-      UserInfo: true
-    }
+    include: {
+      UserInfo: true,
+    },
   });
 };
 
@@ -104,7 +104,7 @@ router.get("/posts/:id", async (req, res) => {
   try {
     const posts = await prisma.user.findMany({
       where: {
-        id: req.query.id,
+        id: req.params.id,
       },
       include: {
         Post: true,
@@ -120,7 +120,34 @@ router.get("/posts/:id", async (req, res) => {
   }
 });
 
-
+//get fav
+router.get("/fav/:id", async (req, res) => {
+  try {
+    console.log(req.params.id);
+    const post = await prisma.postFav.findMany({
+      where: {
+        userId: req.params.id,
+      },
+      include: {
+        Post: {
+          include: {
+            Tag: true,
+            UserFav: true,
+            Comment: true,
+            User: {
+              select: {
+                UserInfo: true,
+              },
+            },
+          },
+        },
+      },
+    });
+    res.json(post);
+  } catch (error) {
+    console.log(error);
+  }
+});
 
 // user.js
 // ...
@@ -128,21 +155,21 @@ router.get("/posts/:id", async (req, res) => {
 router.put("/userinfo", async (req, res) => {
   try {
     const { userId, username, firstName, lastName, phone, address } = req.body;
-    
+
     let userInfoSchema = object({
       userId: string().required(),
       username: string().required(),
       firstName: string(),
       lastName: string(),
       phone: string(),
-      address: string()
+      address: string(),
     });
 
     await userInfoSchema.validate(req.body);
 
     const updateUserInfo = await prisma.userInfo.update({
       where: {
-        userId: userId
+        userId: userId,
       },
       data: {
         username: username,
@@ -150,18 +177,18 @@ router.put("/userinfo", async (req, res) => {
         lastName: lastName,
         phone: phone,
         address: address,
-        updatedAt: new Date()
-      }
+        updatedAt: new Date(),
+      },
     });
-    
+
     res.json(updateUserInfo);
   } catch (error) {
-    if (error.code === 'P2002') {
-      let field = error.meta.target.includes('phone') ? 'phone' : 'username';
+    if (error.code === "P2002") {
+      let field = error.meta.target.includes("phone") ? "phone" : "username";
       res.status(409).json({ message: `${field} already exists` }); // Sending the error to frontend
     } else {
       // Handle other types of errors
-      res.status(500).json({ message: 'An unexpected error occurred' });
+      res.status(500).json({ message: "An unexpected error occurred" });
     }
   }
 });
