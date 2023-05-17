@@ -6,6 +6,7 @@ import bcypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { object, string, number, date } from "yup";
 
+
 const findEmail = async (email) => {
   return await prisma.user.findUnique({
     where: {
@@ -227,6 +228,46 @@ router.put("/userinfo", async (req, res) => {
   }
 });
 
-// ...
+
+router.post("/forgotpassword", async (req, res) => {
+  try {
+    const { email, password, confirmPassword } = req.body;
+
+    // Validate email and new password
+    let schema = object({
+      email: string().email().required(),
+      password: string().required().min(6),
+      confirmPassword: string().required().oneOf([password], "Passwords must match"),
+    });
+
+    await schema.validate(req.body);
+
+    // Check if the email exists in the database
+    const existingUser = await findEmail(email);
+
+    if (!existingUser) {
+      res.status(400).json({ message: "User with this email does not exist" });
+      return;
+    }
+
+    // Update the user's password
+    const hash = await bcypt.hash(password, 10);
+
+    await prisma.user.update({
+      where: {
+        id: existingUser.id,
+      },
+      data: {
+        password: hash,
+      },
+    });
+
+    res.json({ message: "Password has been successfully reset" });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+
 
 export default router;
