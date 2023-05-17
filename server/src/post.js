@@ -14,8 +14,18 @@ router.get("/", async (req, res) => {
           },
         },
         Tag: true,
-        Comment: true,
+        Comment: {
+          include:{
+            author: {
+              select: {
+                id: true,
+                UserInfo: true,
+              },
+            },
+          }
+        },
         UserFav: true,
+
       },
       orderBy: {
         createdAt: "desc",
@@ -144,7 +154,7 @@ router.delete("/fav/:id", async (req, res) => {
 
 
 
-router.delete("/:id/:userId",  async (req, res) => {
+router.delete("/:id/:userId", async (req, res) => {
   try {
     const postId = req.params.id;
     const userId = req.params.userId;
@@ -163,10 +173,18 @@ router.delete("/:id/:userId",  async (req, res) => {
       return res.status(404).json({ error: "Post not found" });
     }
 
-
     if (post.userId !== userId) {
-      return res.status(403).json({ error: "Unauthorized to delete this post" });
+      return res
+        .status(403)
+        .json({ error: "Unauthorized to delete this post" });
     }
+
+    // Delete all comments associated with the post
+    await prisma.comment.deleteMany({
+      where: {
+        postId: postId,
+      },
+    });
 
     // Delete the post
     await prisma.post.delete({

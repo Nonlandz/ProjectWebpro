@@ -121,7 +121,34 @@ router.get("/posts/:id", async (req, res) => {
 });
 
 
+router.delete("/posts/:postId", async (req, res) => {
+  try {
+    const postId = parseInt(req.params.postId);
+    
+    // Check if the post exists
+    const existingPost = await prisma.post.findUnique({
+      where: {
+        id: postId,
+      },
+    });
+    
+    if (!existingPost) {
+      return res.status(404).json({ error: "Post not found" });
+    }
+    
+    // Delete the post
+    await prisma.post.delete({
+      where: {
+        id: postId,
+      },
+    });
 
+    res.json({ message: "Post deleted successfully" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Failed to delete post" });
+  }
+});
 
 
 
