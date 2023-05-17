@@ -136,6 +136,13 @@ import { onMounted } from 'vue';
                     <p class="material-icons-outlined">chat_bubble_outline</p>
                     <p>comment ({{ post.Comment.length }})</p>
                   </button>
+                  <button
+        v-if="post.userId === userId" 
+        @click="deletePost(post.id)"
+        class="material-icons-outlined text-red-500"
+      >
+        delete
+      </button>
                 </div>
               </div>
             </div>
@@ -324,6 +331,37 @@ export default {
       }
     },
 
+    async deletePost(postId) {
+  try {
+    console.log("postId:", postId); // Log the value of postId for debugging
+    const post = this.posts.find((p) => p.id === postId); // Find the post by its ID
+    if (post.userId !== this.userId) {
+      // Check if the post doesn't belong to the user
+      throw new Error("ไม่สามารถลบโพสของผู้อื่นได้");
+    }
+    const response = await axios.delete(`http://localhost:8080/api/posts/${postId}/${this.userId}`);
+    this.posts = this.posts.filter((p) => p.id !== postId); // Remove the post from the list
+
+    // Check if the post is in the user's favorite posts
+    const userFavoritePost = post.UserFav.find((fav) => fav.userId === this.userId);
+    if (userFavoritePost) {
+      // If the post is in the user's favorite posts, delete it from the favorites table
+      await axios.delete(`http://localhost:8080/api/posts/fav/${userFavoritePost.id}`);
+      post.UserFav = post.UserFav.filter((fav) => fav.userId !== this.userId); // Update the UserFav array for the post
+    }
+
+    this.showAlert("success", "ลบโพสสำเร็จ");
+  } catch (error) {
+    console.log(error);
+    this.showAlert("error", "ไม่สามารถลบโพสได้");
+  }
+},
+
+
+
+
+
+
     async like(post) {
       try {
         const check = post.UserFav.find((fav) => fav.userId === this.userId);
@@ -360,6 +398,12 @@ async getPostLikes(postId) {
     return [];
   }
 },
+
+
+
+
+
+
 
 
 

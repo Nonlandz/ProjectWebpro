@@ -120,6 +120,13 @@ router.get("/posts/:id", async (req, res) => {
   }
 });
 
+
+
+
+
+
+
+
 //get fav
 router.get("/fav/:id", async (req, res) => {
   try {

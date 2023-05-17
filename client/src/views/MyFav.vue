@@ -1,6 +1,5 @@
 <template>
   <Layout>
-    <Nav />
   <div>
     <h1 class="text-2xl font-bold mb-5">My Favorite Posts</h1>
     <div v-if="favoritePosts.length === 0 && !loading">
@@ -8,50 +7,54 @@
     </div>
     <div v-else>
       <div v-for="(post, index) in favoritePosts" :key="index">
-        <div class="bg-white p-5">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center">
-              <img
-                src="https://picsum.photos/200"
-                class="h-10 w-10 rounded-full"
-                alt=""
-              />
-              <span class="ml-2"
-                >{{ post?.Post.User?.UserInfo?.firstName }}
-                {{ post?.User?.UserInfo?.lastName }}</span
-              >
-            </div>
-            <span class="rounded-full px-4 bg-gray-200">{{
-              post.Post.Tag.name
-            }}</span>
-          </div>
-          <p class="mt-5">{{ post.Post.title }}</p>
-          <div
-            class="w-full mt-5 flex justify-center relative"
-            v-if="post.image"
-          >
-            <img :src="post?.image" class="h-[300px] w-[300px]" alt="" />
-          </div>
-          <p class="mt-5">{{ post.Post.detail }}</p>
-          <div class="flex justify-between items-center mt-5 border-t pt-5">
-            <div class="flex gap-x-5">
-              <button @click="like(post)" class="flex items-center gap-x-2">
-                <p :class="{ like: post.like }" class="material-icons-outlined">
-                  favorite_border
-                </p>
-                <p>like ({{ post.Post.UserFav.length }})</p>
-              </button>
-              <button
-                @click="navigateToPost(post.id)"
-                class="flex items-center gap-x-2"
-              >
-                <p class="material-icons-outlined">chat_bubble_outline</p>
-                <p>comment ({{ post.Post.Comment.length }})</p>
-              </button>
-            </div>
-          </div>
-        </div>
+  <div class="bg-white p-5">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center">
+        <img
+          src="https://picsum.photos/200"
+          class="h-10 w-10 rounded-full"
+          alt=""
+        />
+        <span class="ml-2">
+          {{ post?.Post?.User?.UserInfo?.firstName }}
+          {{ post?.Post?.User?.UserInfo?.lastName }}
+        </span>
       </div>
+      <span class="rounded-full px-4 bg-gray-200">
+        {{ post?.Post?.Tag?.name }}
+      </span>
+    </div>
+    <p class="mt-5">{{ post?.Post?.title }}</p>
+    <div
+      class="w-full mt-5 flex justify-center relative"
+      v-if="post?.image"
+    >
+      <img :src="post?.image" class="h-[300px] w-[300px]" alt="" />
+    </div>
+    <p class="mt-5">{{ post?.Post?.detail }}</p>
+    <div class="flex justify-between items-center mt-5 border-t pt-5">
+      <div class="flex gap-x-5">
+        <button @click="like(post)" class="flex items-center gap-x-2">
+          <p
+            :class="{ like: post?.like }"
+            class="material-icons-outlined"
+          >
+            favorite_border
+          </p>
+          <p>like ({{ post?.Post?.UserFav?.length }})</p>
+        </button>
+        <button
+          @click="navigateToPost(post?.id)"
+          class="flex items-center gap-x-2"
+        >
+          <p class="material-icons-outlined">chat_bubble_outline</p>
+          <p>comment ({{ post?.Post?.Comment?.length }})</p>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
     </div>
   </div>
 </Layout>
@@ -69,7 +72,7 @@ export default {
     const storage = useFirebaseStorage();
     return { storage };
   },
-  component: {
+  components: {
     Nav,
   },
   data() {
@@ -150,3 +153,4 @@ export default {
 <style scoped>
 /* Add your custom styles here */
 </style>
+a
