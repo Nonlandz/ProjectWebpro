@@ -13,8 +13,6 @@
               <input id="username" name="username" type="text" class="border rounded-md w-full py-1 px-1 mb-3 h-9" v-model="form.username" placeholder="Username"/>
             </div>
             <div>
-              <!-- <label for="firstName" class="sr-only">First Name</label>
-              <input id="firstName" name="firstName" type="text" v-model="form.firstName" class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-200 focus:border-blue-200 focus:z-10 sm:text-sm" placeholder="First Name"> -->
               <label for="firstName" class="sr-only">First Name</label>
               <input id="firstName" name="firstName" type="text" class="border rounded-md w-full py-1 px-1 mb-3 h-9" v-model="form.firstName" placeholder="First Name"/>
             </div>
