@@ -2,7 +2,7 @@
   <Layout>
     <div class="w-full h-full flex flex-grow items-center justify-center">
       <div class="w-96 border flex flex-col items-center gap-y-10 p-5 rounded-md shadow-md px-10 bg-white">
-        <h1 class="text-3xl text-slate-600 font-bold my-10">Login</h1>
+        <h1 class="text-3xl text-slate-600 font-bold my-10">ITxChange</h1>
         <div class="w-full flex flex-col items-center gap-y-3">
           <div class="flex flex-col w-full">
             <label class="text-slate-600" for="email">Email</label>
