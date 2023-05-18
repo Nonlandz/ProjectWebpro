@@ -270,4 +270,33 @@ router.post("/forgotpassword", async (req, res) => {
 
 
 
+router.get("/profile/:userId", async (req, res) => {
+  
+  try {
+    
+    const { userId } = req.params;
+
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+      include: {
+        UserInfo: true,
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json(user);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Failed to fetch user profile" });
+  }
+});
+
+
+
+
 export default router;

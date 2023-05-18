@@ -100,10 +100,13 @@ import { onMounted } from 'vue';
                  class="h-10 w-10 rounded-full"
                  alt=""
                />
-<span class="ml-2"
-                 >{{ post?.User?.UserInfo?.firstName }}
-{{ post?.User?.UserInfo?.lastName }}</span
-               >
+               <router-link
+            :to="{ name: 'UserProfile', params: { userId: post?.User?.id } }"
+            class="ml-2"
+          >
+            {{ post?.User?.UserInfo?.firstName }}
+            {{ post?.User?.UserInfo?.lastName }}
+          </router-link>
 </div>
 <span class="rounded-full px-4 bg-gray-200">{{
               post.Tag.name
@@ -114,7 +117,7 @@ import { onMounted } from 'vue';
             class="w-full mt-5 flex justify-center relative"
             v-if="post.image"
           >
-            <img :src="post?.image" class="h-[300px] w-[300px]" alt="" />
+            <img :src="post?.image" class="h-[300px] w-[380px]" alt="" />
           </div>
           <p class="mt-5">{{ post.detail }}</p>
           <div class="flex justify-between items-center mt-5 border-t pt-5">
@@ -153,8 +156,15 @@ import { onMounted } from 'vue';
   class="h-8 w-8 rounded-full"
   alt=""
 />
+
+
+<router-link
+            :to="{ name: 'UserProfile', params: { userId: post?.User?.id } }"
+            class="ml-2"
+          >
 <span class="ml-2">{{ comment.author?.UserInfo?.firstName || '' }}</span>
 <span class="ml-2">{{ comment.author?.UserInfo?.lastName || '' }}</span>
+</router-link>
 
 <button
       v-if="comment.authorId === userId"

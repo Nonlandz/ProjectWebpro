@@ -40,6 +40,13 @@ const routes = [
     component: () => import("../views/MyFav.vue"),
   },
 
+  {
+    path: '/user/:userId',
+    name: 'UserProfile',
+    component: () => import("../views/userprofile.vue"),
+    props: true
+  },
+
   
 ];
 
