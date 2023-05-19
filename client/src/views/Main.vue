@@ -159,7 +159,7 @@ import { onMounted } from 'vue';
 
 
 <router-link
-            :to="{ name: 'UserProfile', params: { userId: post?.User?.id } }"
+            :to="{ name: 'UserProfile', params: { userId: comment.author?.id } }"
             class="ml-2"
           >
 <span class="ml-2">{{ comment.author?.UserInfo?.firstName || '' }}</span>
