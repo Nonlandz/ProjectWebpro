@@ -202,7 +202,26 @@ router.delete("/:id/:userId", async (req, res) => {
 
 
 
+router.put("/:id", async (req, res) => {
+  try {
+    const postId = req.params.id;
+    const status = req.body.status;
 
+    await prisma.post.update({
+      where: {
+        id: postId,
+      },
+      data: {
+        status: status,
+      },
+    });
+
+    res.status(200).json({ message: "Post status updated successfully" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Failed to update post status" });
+  }
+});
 
 
 export default router;

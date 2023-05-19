@@ -126,36 +126,43 @@ export default {
 
 
 
-    async login() {
-      try {
-        const result = await this.v$.$validate();
+async login() {
+  try {
+    const result = await this.v$.$validate();
 
-        if (!result) {
-          throw new Error("Invalid data");
-        }
+    if (!result) {
+      throw new Error("Invalid data");
+    }
 
-        const res = await axios.post("http://localhost:8080/api/user/login", this.data);
+    const res = await axios.post("http://localhost:8080/api/user/login", this.data);
 
-        localStorage.setItem("user", JSON.stringify(res.data.user));
-        localStorage.setItem("token", res.data.accessToken);
+    localStorage.setItem("user", JSON.stringify(res.data.user));
+    localStorage.setItem("token", res.data.accessToken);
 
-        // Check if user information is complete
-        if (!res.data.user.UserInfo.username) {
-          // Redirect to userinfo page if user information is not complete
-          this.$router.push("/userinfo");
-          this.showAlert("info", "Please complete your user information.");
-        } else {
-          this.$router.push("/");
-          this.showAlert("success", "Successfully Login");
-        }
-      } catch (error) {
-        if (error?.response?.data?.message) {
-          this.showAlert("error", error.response.data.message);
-        } else {
-          this.showAlert("error", error.message);
-        }
+    // Check if user information is complete
+    if (!res.data.user.UserInfo.username) {
+      // Redirect to userinfo page if user information is not complete
+      this.$router.push("/userinfo");
+      this.showAlert("info", "Please complete your user information.");
+    } else {
+      if (res.data.user.role === "admin") {
+        // Redirect to admin page for admin users
+        this.$router.push("/admin");
+      } else {
+        // Redirect to home page for non-admin users
+        this.$router.push("/");
       }
-    },
+      this.showAlert("success", "Successfully Login");
+    }
+  } catch (error) {
+    if (error?.response?.data?.message) {
+      this.showAlert("error", error.response.data.message);
+    } else {
+      this.showAlert("error", error.message);
+    }
+  }
+},
+
 
     register() {
       this.$router.push("/register");

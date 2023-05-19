@@ -17,6 +17,7 @@ router.get("/", async (req, res) => {
 // POST /comments
 router.post("/", async (req, res) => {
   const { content, authorId, postId } = req.body;
+  console.log(req.body);
 
   try {
     const comment = await prisma.comment.create({
@@ -99,6 +100,5 @@ router.delete("/:id/:userId", async (req, res) => {
   
   
 export default router;
-
 
 

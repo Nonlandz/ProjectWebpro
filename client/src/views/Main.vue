@@ -427,24 +427,6 @@ export default {
     },
 
 
-    async addComment(postId) {
-      try {
-        const postIndex = this.posts.findIndex((post) => post.id === postId);
-        if (postIndex > -1) {
-          const response = await axios.post("http://localhost:8080/api/comments/", {
-            content: this.posts[postIndex].commentText,
-            authorId: this.userId,
-            postId: postId,
-          });
-
-          const newComment = response.data;
-          this.posts[postIndex].Comment.push(newComment);
-          this.posts[postIndex].commentText = "";
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    },
   
 
 
@@ -530,11 +512,34 @@ async addComment(postId) {
       const newComment = response.data;
       this.posts[postIndex].Comment.push(newComment);
       this.posts[postIndex].commentText = "";
+
+      // Alert success message
+      this.$swal.fire({
+        icon: "success",
+        title: "เพิ่มความคิดเห็นสำเร็จ",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+
+      // Delay the page refresh for 3 seconds
+      setTimeout(() => {
+        window.location.reload();
+      }, 3000);
     }
   } catch (error) {
     console.log(error);
   }
 },
+
+
+
+
+
+
+
+
+
+
 
 
 

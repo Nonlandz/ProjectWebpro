@@ -90,26 +90,27 @@ export default {
   },
   methods: {
     async getFavoritePosts() {
-      try {
-        this.loading = true;
-        const res = await axios.get(
-          `http://localhost:8080/api/user/fav/${this.userId}`
-        );
-        this.favoritePosts = res.data;
-        this.favoritePosts.map(async (post) => {
-          const starsRef = storageRef(this.storage, "posts/" + post.postId);
-          const search = await listAll(starsRef);
-          if (search.items.length > 0) {
-            const download = await getDownloadURL(search.items[0]);
-            post.image = download;
-          }
-        });
-        this.loading = false;
-      } catch (error) {
-        console.log(error);
-        this.loading = false;
+  try {
+    this.loading = true;
+    const res = await axios.get(`http://localhost:8080/api/user/fav/${this.userId}`);
+    const favoritePosts = res.data.filter((post) => post.Post.status === 'approve');
+    this.favoritePosts = favoritePosts;
+    
+    for (const post of this.favoritePosts) {
+      const starsRef = storageRef(this.storage, "posts/" + post.postId);
+      const search = await listAll(starsRef);
+      if (search.items.length > 0) {
+        const download = await getDownloadURL(search.items[0]);
+        post.image = download;
       }
-    },
+    }
+    
+    this.loading = false;
+  } catch (error) {
+    console.log(error);
+    this.loading = false;
+  }
+},
 
     async like(choose) {
       const post = choose.Post;
