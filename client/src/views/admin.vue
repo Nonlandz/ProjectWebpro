@@ -2,7 +2,7 @@
     <Layout>
       <Nav />
       <div class="container mx-auto px-4 flex flex-col items-center">
-        <h1 class="text-3xl font-bold mb-4">Welcome to Admin Page</h1>
+        <h1 class="text-3xl font-bold mb-5 mt-16">Welcome to Admin Page</h1>
         <div class="flex mb-4">
           <input
             type="text"

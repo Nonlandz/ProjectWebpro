@@ -1,11 +1,17 @@
+
 <template>
-  <div class="profile-upload">
-    <h1>Upload Profile Image</h1>
-    <input type="file" @change="handleImagePreview">
-    <div v-if="previewImage">
-      <img :src="previewImage" alt="Profile Image" class="preview-image">
+  <div class="w-full h-screen flex items-center justify-center bg-[#e5e7e9]">
+    <div class="w-4/12 border flex flex-col items-center p-1 rounded-md drop-shadow-lg shadow-md px-8 bg-white drop-shadow-lg">
+      <div class="profile-upload content-center justify-center">
+        <h1 class="text-3xl text-slate-600 font-bold mb-10">Upload Profile Image</h1>
+        <input class="ml-36" type="file" @change="handleImagePreview">
+        <div v-if="previewImage">
+          <img :src="previewImage" alt="Profile Image" class="preview-image">
+        </div>
+        <button class="p-5 bg-[#EB6648] text-white px-5 py-1 rounded-md mt-5 hover:bg-[#df593a] drop-shadow-lg" @click="uploadProfileImage">Submit</button>
+        <button class="p-5 bg-[#286aa2] text-white px-5 py-1 rounded-md mt-3 mb-8 hover:bg-[#1a456a] drop-shadow-lg">Back To Post</button>
+      </div>
     </div>
-    <button @click="uploadProfileImage">Submit</button>
   </div>
 </template>
 
