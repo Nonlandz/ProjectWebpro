@@ -50,6 +50,7 @@ export default {
     const downloadURL = await getDownloadURL(starsRef);
     console.log('Profile image URL:', downloadURL);
 
+
     // Reset the input and preview
     chooseImage.value = null;
     previewImage.value = null;
@@ -60,6 +61,7 @@ export default {
     // or perform additional actions based on the specific error
   }
 };
+
 
 
 
