@@ -148,7 +148,7 @@ import { onMounted } from 'vue';
             </div>
           </div>
 
-          
+          <hr class="my-5">
           <div v-for="(comment, commentIndex) in post.Comment" :key="commentIndex" class="mt-3">
       <div class="flex items-center">
         <img
