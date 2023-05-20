@@ -1,17 +1,20 @@
 <template>
-    <div class="user-profile">
-      <h1>User Profile</h1>
-      <div class="user-info">
-        <p><strong>User ID:</strong> {{ userId }}</p>
-        <p><strong>First Name:</strong> {{ userInfo.firstName }}</p>
-        <p><strong>Last Name:</strong> {{ userInfo.lastName }}</p>
-        <p><strong>Phone:</strong> {{ userInfo.phone }}</p>
-        <p><strong>Address:</strong> {{ userInfo.address }}</p>
+  <div class="w-full h-screen flex items-center justify-center bg-[#1E4F79]">
+    <div class="user-profile w-5/12 flex flex-col items-center justify-center content-center rounded-md shadow-md bg-white">
+      <h1 class="text-3xl text-slate-600">User Profile</h1>
+      <div class="user-info text-xl">
+        <p><label class="font-medium text-slate-600">User ID :</label> {{ userId }}</p>
+        <p><label class="font-medium text-slate-600">First Name :</label> {{ userInfo.firstName }}</p>
+        <p><label class="font-medium text-slate-600">Last Name :</label> {{ userInfo.lastName }}</p>
+        <p><label class="font-medium text-slate-600">Phone :</label> {{ userInfo.phone }}</p>
+        <p><label class="font-medium text-slate-600">Address :</label> {{ userInfo.address }}</p>
       </div>
     </div>
+  </div>
   </template>
   
   <style>
+  @import url('https://fonts.googleapis.com/css2?family=Outfit&display=swap');
   .user-profile {
     background-color: #f5f5f5;
     padding: 20px;
