@@ -95,11 +95,7 @@ import { onMounted } from 'vue';
             <div class="bg-white p-5">
 <div class="flex items-center justify-between">
 <div class="flex items-center">
-<img
-                 src="https://picsum.photos/200"
-                 class="h-10 w-10 rounded-full"
-                 alt=""
-               />
+  <img :src="post.User.UserInfo.profileImageUrl" class="h-10 w-10 rounded-full" alt="" />
                <router-link
             :to="{ name: 'UserProfile', params: { userId: post?.User?.id } }"
             class="ml-2"
@@ -151,11 +147,8 @@ import { onMounted } from 'vue';
           <hr class="my-5">
           <div v-for="(comment, commentIndex) in post.Comment" :key="commentIndex" class="mt-3">
       <div class="flex items-center">
-        <img
-  :src="comment.author?.UserInfo?.profileImageUrl || 'https://picsum.photos/200'"
-  class="h-8 w-8 rounded-full"
-  alt=""
-/>
+        <img :src="comment.author.UserInfo.profileImageUrl" class="h-10 w-10 rounded-full" alt="" />
+
 
 
 <router-link
@@ -278,6 +271,7 @@ export default {
       posts: [],
       userId: JSON.parse(localStorage.getItem("user"))?.id ?? null,
       expandedPosts: [],
+      profileImageUrl: '',
     };
   },
   validations() {
@@ -304,6 +298,7 @@ export default {
     this.getPost();
     this.updatePostLikes(); // Update the likes for all posts
     this.saveLikedPostsToLocalStorage(); //
+    this.fetchProfileImage();
   },
   methods: {
     async showAlert(type, text) {
@@ -376,22 +371,64 @@ export default {
     },
 
     async getPost() {
-      try {
-        const res = await axios.get("http://localhost:8080/api/posts/");
-        const newPosts = res.data.filter((post) => post.status === "approve");
-        for (const post of newPosts) {
-          const starsRef = storageRef(storage, "posts/" + post.id);
-          const search = await listAll(starsRef);
-          if (search.items.length === 0) continue;
-          const download = (await getDownloadURL(search.items[0])).toString();
-          post.image = download;
-        }
-        this.posts.push(...newPosts); // Merge new posts with existing ones
-        // No need to call updatePostLikes here
-      } catch (error) {
-        console.log(error);
+  try {
+    const res = await axios.get("http://localhost:8080/api/posts/");
+    const newPosts = res.data.filter((post) => post.status === "approve");
+
+    for (const post of newPosts) {
+      const starsRef = storageRef(storage, "posts/" + post.id);
+      const search = await listAll(starsRef);
+      if (search.items.length === 0) continue;
+      const download = (await getDownloadURL(search.items[0])).toString();
+      post.image = download;
+
+      const profileImageUrl = await this.fetchProfileImage(post.userId);
+      post.User.UserInfo.profileImageUrl = profileImageUrl;
+
+      for (const comment of post.Comment) {
+        const commentProfileImageUrl = await this.fetchCommentProfileImage(comment.author.id);
+        comment.author.UserInfo.profileImageUrl = commentProfileImageUrl;
       }
-    },
+    }
+
+    this.posts = newPosts;
+  } catch (error) {
+    console.log(error);
+  }
+},
+
+
+
+    async fetchProfileImage(userId) {
+  try {
+    const starsRef = storageRef(storage, `users/${userId}`);
+    const search = await listAll(starsRef);
+    const downloadURL = (await getDownloadURL(search.items[0])).toString();
+    return downloadURL;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+},
+
+
+
+
+async fetchCommentProfileImage(userId) {
+  try {
+    const starsRef = storageRef(storage, `users/${userId}`);
+    const search = await listAll(starsRef);
+    const downloadURL = (await getDownloadURL(search.items[0])).toString();
+    return downloadURL;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+},
+
+
+
+
 
 
     async deleteComment(postId, commentId) {
@@ -427,6 +464,7 @@ export default {
     },
 
 
+    
   
 
 
@@ -521,7 +559,7 @@ async addComment(postId) {
         timer: 1500,
       });
 
-      // Delay the page refresh for 3 seconds
+      // Delay the page refresh for 1 seconds
       setTimeout(() => {
         window.location.reload();
       }, 1000);

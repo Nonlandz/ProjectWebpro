@@ -23,7 +23,7 @@ const routes = [
     component: () => import("../views/Post.vue"),
   },
   {
-    path: "/profile/:id",
+    path: "/profile",
     name: "profile",
     component: () => import("../views/Profile.vue"),
   },
