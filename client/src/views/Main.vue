@@ -524,7 +524,7 @@ async addComment(postId) {
       // Delay the page refresh for 3 seconds
       setTimeout(() => {
         window.location.reload();
-      }, 3000);
+      }, 1000);
     }
   } catch (error) {
     console.log(error);
