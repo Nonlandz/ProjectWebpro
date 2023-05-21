@@ -110,11 +110,15 @@ import { onMounted } from 'vue';
           </div>
           <p class="mt-5">{{ post.title }}</p>
           <div
-            class="w-full mt-5 flex justify-center relative"
-            v-if="post.image"
-          >
-            <img :src="post?.image" class="h-[300px] w-[380px]" alt="" />
-          </div>
+  class="w-full mt-5 flex justify-center relative"
+  v-if="post.image"
+>
+  <img
+    :src="post?.image"
+    class="object-cover object-center w-50 h-96"
+    alt=""
+  />
+</div>
           <p class="mt-5">{{ post.detail }}</p>
           <p v-if="post.exchangeEnded" class="mt-2 text-red-500">อุปกรณ์ถูกแลกเปลี่ยนเรียบร้อยแล้ว</p>
           <div class="flex justify-between items-center mt-5 border-t pt-5">

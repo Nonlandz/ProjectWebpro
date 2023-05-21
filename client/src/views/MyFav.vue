@@ -1,12 +1,12 @@
 <template>
   <Layout>
-  <div>
-    <h1 class="text-2xl font-bold mb-5">My Favorite Posts</h1>
-    <div v-if="favoritePosts.length === 0 && !loading">
-      No favorite posts found.
-    </div>
-    <div v-else>
-      <div v-for="(post, index) in favoritePosts" :key="index">
+    <div class="flex flex-col items-center justify-center">
+      <h1 class="text-2xl font-bold mb-5">My Favorite Posts</h1>
+      <div v-if="favoritePosts.length === 0 && !loading" class="text-gray-500">
+        No favorite posts found.
+      </div>
+      <div v-else>
+        <div v-for="(post, index) in favoritePosts" :key="index">
   <div class="bg-white p-5">
     <div class="flex items-center justify-between">
       <div class="flex items-center">
@@ -32,7 +32,7 @@
       <img :src="post?.image" class="h-[300px] w-[300px]" alt="" />
     </div>
     <p class="mt-5">{{ post?.Post?.detail }}</p>
-    <p v-if="post.exchangeEnded = 'true'" class="mt-2 text-red-500">อุปกรณ์ถูกแลกเปลี่ยนเรียบร้อยแล้ว</p>
+    <p v-if="post?.Post?.exchangeEnded === true" class="mt-2 text-red-500">อุปกรณ์ถูกแลกเปลี่ยนเรียบร้อยแล้ว</p>
     <div class="flex justify-between items-center mt-5 border-t pt-5">
       <div class="flex gap-x-5">
         <button @click="like(post)" class="flex items-center gap-x-2">
@@ -59,6 +59,108 @@
   </div>
 </Layout>
 </template>
+
+<style scoped>
+/* Add your custom styles here */
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.post-card {
+  background-color: white;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.post-card .post-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.post-card .post-info img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.post-card .post-info .post-user {
+  display: flex;
+  align-items: center;
+}
+
+.post-card .post-info .post-user span {
+  margin-left: 0.5rem;
+  font-weight: 600;
+}
+
+.post-card .post-tags {
+  margin-bottom: 0.5rem;
+}
+
+.post-card .post-image img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-radius: 0.5rem;
+}
+
+.post-card .post-content {
+  margin-top: 1rem;
+}
+
+.post-card .post-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+  border-top: 1px solid #ddd;
+  padding-top: 1rem;
+}
+
+.post-card .post-actions button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.post-card .post-actions button p {
+  font-size: 0.9rem;
+}
+
+.post-card .post-actions button .like {
+  color: red;
+}
+
+.loading {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.loading .spinner {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+</style>
 
 <script>
 import axios from "axios";
