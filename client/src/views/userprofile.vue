@@ -11,7 +11,7 @@
         <p><label class="font-medium text-slate-600">Phone :</label> {{ userInfo.phone }}</p>
         <p><label class="font-medium text-slate-600">Address :</label> {{ userInfo.address }}</p>
       </div>
-      <button class="p-5 bg-[#EB6648] text-white px-5 py-1 rounded-md mb-4 hover:bg-[#df593a] drop-shadow-lg">Back To Post</button>
+      <button @click="this.$router.push('/')" class="p-5 bg-[#EB6648] text-white px-5 py-1 rounded-md mb-4 hover:bg-[#df593a] drop-shadow-lg">Back To Post</button>
     </div>
   </div>
   </template>
