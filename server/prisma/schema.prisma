@@ -54,23 +54,24 @@ model PostFav {
 }
 
 model Post {
-  id     String     @id @default(cuid())
-  title  String
-  detail String
-  userId String
-  tagId  Int
-  status PostStatus @default(pending)
+  id            String     @id @default(cuid())
+  title         String
+  detail        String
+  userId        String
+  tagId         Int
+  status        PostStatus @default(pending)
+  exchangeEnded Boolean?   @default(false) // New field to indicate if item exchange has ended
 
-  Tag     Tag?      @relation(fields: [tagId], references: [id])
-  User    User?     @relation(fields: [userId], references: [id])
+  Tag           Tag?      @relation(fields: [tagId], references: [id])
+  User          User?     @relation(fields: [userId], references: [id])
 
-  UserFav PostFav[]
-  Comment Comment[]
+  UserFav       PostFav[]
+  Comment       Comment[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
+
 
 enum PostStatus {
   approve

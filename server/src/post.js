@@ -226,4 +226,50 @@ router.put("/:id", async (req, res) => {
 
 
 
+
+
+
+router.put("/end-exchange/:id/:userId", async (req, res) => {
+  try {
+    const postId = req.params.id;
+    const userId = req.params.userId;
+
+    // Check if the user is authorized to end the exchange
+    const post = await prisma.post.findUnique({
+      where: {
+        id: postId,
+      },
+      select: {
+        userId: true,
+      },
+    });
+
+    if (!post) {
+      return res.status(404).json({ error: "Post not found" });
+    }
+
+    if (post.userId !== userId) {
+      return res
+        .status(403)
+        .json({ error: "Unauthorized to end the exchange for this post" });
+    }
+
+    await prisma.post.update({
+      where: {
+        id: postId,
+      },
+      data: {
+        exchangeEnded: true,
+      },
+    });
+
+    res.status(200).json({ success: true });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Failed to end the exchange" });
+  }
+});
+
+
+
 export default router;

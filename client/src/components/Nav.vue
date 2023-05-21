@@ -14,7 +14,7 @@
     <div class="absolute top-14 right-5 bg-white w-40 rounded-md" v-if="dropdown">
       <div class="flex flex-col items-start gap-y-2 text-black py-5">
         <button @click="this.$router.push('/profile')" class="px-5 hover:bg-slate-200 w-full text-left">profile</button>
-        <button class="px-5 hover:bg-slate-200 w-full text-left">my post</button>
+        <button @click="this.$router.push('/MyPost')"  class="px-5 hover:bg-slate-200 w-full text-left">my post</button>
         <button @click="logout" class="px-5 hover:bg-slate-200 w-full text-left">logout</button>
       </div>
     </div>

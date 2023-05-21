@@ -54,6 +54,13 @@ const routes = [
     props: true
   },
 
+
+
+  {
+    path: "/MyPost",
+    name: "MyPost",
+    component: () => import("../views/MyPost.vue"),
+  },
   
 ];
 

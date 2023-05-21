@@ -32,6 +32,7 @@
       <img :src="post?.image" class="h-[300px] w-[300px]" alt="" />
     </div>
     <p class="mt-5">{{ post?.Post?.detail }}</p>
+    <p v-if="post.exchangeEnded = 'true'" class="mt-2 text-red-500">อุปกรณ์ถูกแลกเปลี่ยนเรียบร้อยแล้ว</p>
     <div class="flex justify-between items-center mt-5 border-t pt-5">
       <div class="flex gap-x-5">
         <button @click="like(post)" class="flex items-center gap-x-2">
@@ -44,7 +45,6 @@
           <p>like ({{ post?.Post?.UserFav?.length }})</p>
         </button>
         <button
-          @click="navigateToPost(post?.id)"
           class="flex items-center gap-x-2"
         >
           <p class="material-icons-outlined">chat_bubble_outline</p>

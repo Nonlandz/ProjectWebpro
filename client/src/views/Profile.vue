@@ -1,5 +1,7 @@
 
 <template>
+  <Layout>
+      <Nav />
   <div class="w-full h-screen flex items-center justify-center bg-[#e5e7e9]">
     <div class="w-4/12 border flex flex-col items-center p-1 rounded-md shadow-md px-8 bg-white drop-shadow-lg">
       <div class="profile-upload content-center justify-center">
@@ -13,14 +15,22 @@
       </div>
     </div>
   </div>
+</Layout>
 </template>
 
 <script>
 import { ref } from 'vue';
 import { useFirebaseStorage } from 'vuefire';
 import { ref as storageRef, getDownloadURL, uploadBytes } from 'firebase/storage';
+import Layout from "../components/Layout.vue";
+import Nav from "../components/Nav.vue";
 
 export default {
+  components: {
+    Layout,
+    Nav,
+  },
+
   setup() {
     const storage = useFirebaseStorage();
     const previewImage = ref(null);

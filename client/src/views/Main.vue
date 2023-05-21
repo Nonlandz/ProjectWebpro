@@ -116,6 +116,7 @@ import { onMounted } from 'vue';
             <img :src="post?.image" class="h-[300px] w-[380px]" alt="" />
           </div>
           <p class="mt-5">{{ post.detail }}</p>
+          <p v-if="post.exchangeEnded" class="mt-2 text-red-500">อุปกรณ์ถูกแลกเปลี่ยนเรียบร้อยแล้ว</p>
           <div class="flex justify-between items-center mt-5 border-t pt-5">
             <div class="flex gap-x-5">
               <button @click="like(post)" class="flex items-center gap-x-2">
@@ -130,6 +131,7 @@ import { onMounted } from 'vue';
               <button
                 @click="expandPost(post.id)"
                 class="flex items-center gap-x-2"
+                :disabled="post.exchangeEnded"
               >
                 <p class="material-icons-outlined">chat_bubble_outline</p>
                 <p>comment ({{ post.Comment.length }})</p>
@@ -141,6 +143,14 @@ import { onMounted } from 'vue';
               >
                 delete
               </button>
+
+              <button
+  v-if="post.userId === userId"
+  @click="endExchange(post.id)"
+  class="material-icons-outlined text-blue-500 ml-2"
+>
+  done_all
+</button>
 
               
             </div>
@@ -444,6 +454,32 @@ async fetchCommentProfileImage(userId) {
     return null;
   }
 },
+
+
+
+async endExchange(postId) {
+  try {
+    const response = await axios.put(
+      `http://localhost:8080/api/posts/end-exchange/${postId}/${this.userId}`
+    );
+    if (response.data.success) {
+      const postIndex = this.posts.findIndex((post) => post.id === postId);
+      if (postIndex > -1) {
+        this.posts[postIndex].exchangeEnded = true; // Set the exchangeEnded flag to true for the post
+       // Append the message to the post detail
+        this.showAlert("success", "จบการแลกเปลี่ยนสินค้าแล้ว");
+      }
+    } else {
+      throw new Error("ไม่สามารถจบการแลกเปลี่ยนสินค้าได้");
+    }
+  } catch (error) {
+    console.log(error);
+    this.showAlert("error", "ไม่สามารถจบการแลกเปลี่ยนสินค้าได้");
+  }
+},
+
+
+
 
 
 

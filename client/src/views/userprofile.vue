@@ -3,10 +3,11 @@
     <div class="user-profile w-4/12 h-100 flex flex-col items-center justify-center content-center rounded-md shadow-md bg-white">
       <h1 class="text-3xl text-[#1E4F79] mt-4 font-bold">User Profile</h1>
       <div class="user-info text-xl">
-        <p><label class="font-medium text-slate-600">User ID :</label> {{ userId }}</p>
+        <img :src="profileImageUrl" class="" alt="" />
+        <!-- <p><label class="font-medium text-slate-600">User ID :</label> {{ userId }}</p> -->
         <div class="grid grid-cols-2 gap-5">
-        <p><label class="font-medium text-slate-600">First Name :</label> {{ userInfo.firstName }}</p>
-        <p><label class="font-medium text-slate-600">Last Name :</label> {{ userInfo.lastName }}</p>
+          <p><label class="font-medium text-slate-600">First Name :</label> {{ userInfo.firstName }}</p>
+          <p><label class="font-medium text-slate-600">Last Name :</label> {{ userInfo.lastName }}</p>
         </div>
         <p><label class="font-medium text-slate-600">Phone :</label> {{ userInfo.phone }}</p>
         <p><label class="font-medium text-slate-600">Address :</label> {{ userInfo.address }}</p>
@@ -14,73 +15,95 @@
       <button @click="this.$router.push('/')" class="p-5 bg-[#EB6648] text-white px-5 py-1 rounded-md mb-4 hover:bg-[#df593a] drop-shadow-lg">Back To Post</button>
     </div>
   </div>
-  </template>
-  
-  <style>
-  @import url('https://fonts.googleapis.com/css2?family=Outfit&display=swap');
-  .user-profile {
-    /* background-color: #f5f5f5; */
-    padding: 20px;
-    border-radius: 5px;
-  }
-  
-  .user-info {
-    background-color: #ffffff;
-    padding: 20px;
-    border-radius: 5px;
-    margin-top: 20px;
-  }
-  
-  .user-info p {
-    margin-bottom: 10px;
-  }
-  </style>
-  
-  <script>
-  import axios from "axios";
-  
-  export default {
-    name: 'UserProfile',
-    props: {
-      userId: {
-        type: Number,
-        required: true
+</template>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Outfit&display=swap');
+
+.user-profile {
+  padding: 20px;
+  border-radius: 5px;
+}
+
+.user-info {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 5px;
+  margin-top: 20px;
+}
+
+.user-info p {
+  margin-bottom: 10px;
+}
+</style>
+
+<script>
+import axios from "axios";
+import { ref as storageRef, getDownloadURL, listAll } from "firebase/storage";
+import { useFirebaseStorage } from "vuefire";
+
+export default {
+  setup() {
+    const storage = useFirebaseStorage();
+    return { storage };
+  },
+  name: 'UserProfile',
+  props: {
+    userId: {
+      type: Number,
+      required: true
+    }
+  },
+  data() {
+    return {
+      userInfo: {
+        firstName: '',
+        lastName: '',
+        phone: '',
+        address: ''
+      },
+      profileImageUrl: ''
+    };
+  },
+  mounted() {
+    // Fetch user information from an API endpoint using the userId prop
+    this.fetchUserInfo();
+
+    this.fetchProfileImage(this.userId)
+      .then((profileImageUrl) => {
+        this.profileImageUrl = profileImageUrl;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  },
+  methods: {
+    async fetchUserInfo() {
+      try {
+        const response = await axios.get(`http://localhost:8080/api/user/profile/${this.userId}`);
+        const { firstName, lastName, phone, address } = response.data.UserInfo;
+        this.userInfo = {
+          firstName,
+          lastName,
+          phone,
+          address
+        };
+      } catch (error) {
+        console.log(error);
       }
     },
-    data() {
-      return {
-        userInfo: {
-          firstName: '',
-          lastName: '',
-          phone: '',
-          address: ''
-        }
-      };
-    },
-    mounted() {
-      // Fetch user information from an API endpoint using the userId prop
-      this.fetchUserInfo();
-      
-    },
-    methods: {
-      async fetchUserInfo() {
-        
-        try {
-            
-          const response = await axios.get(`http://localhost:8080/api/user/profile/${this.userId}`);
-          
-          const { firstName, lastName, phone, address } = response.data.UserInfo;
-          this.userInfo = {
-            firstName,
-            lastName,
-            phone,
-            address
-          };
-        } catch (error) {
-          console.log(error);
-        }
+
+    async fetchProfileImage(userId) {
+      try {
+        const starsRef = storageRef(this.storage, `users/${userId}`);
+        const search = await listAll(starsRef);
+        const downloadURL = (await getDownloadURL(search.items[0])).toString();
+        return downloadURL;
+      } catch (error) {
+        console.log(error);
+        return null;
       }
     }
-  };
-  </script>
-  
+  }
+};
+</script>
