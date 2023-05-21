@@ -126,7 +126,7 @@ export default {
       });
   },
   methods: {
-    async fetchUserInfo() {
+    async fetchUserInfo() { //ดึงuserinfoมาใช้
       try {
         const response = await axios.get(`http://localhost:8080/api/user/profile/${this.userId}`);
         const { firstName, lastName, phone, address } = response.data.UserInfo;
@@ -141,7 +141,7 @@ export default {
       }
     },
 
-    async fetchProfileImage(userId) {
+    async fetchProfileImage(userId) { //ดึงรูปโปรไฟล์มาใช้
       try {
         const starsRef = storageRef(this.storage, `users/${userId}`);
         const search = await listAll(starsRef);

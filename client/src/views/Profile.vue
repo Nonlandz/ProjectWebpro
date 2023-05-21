@@ -49,7 +49,7 @@ export default {
         previewImage.value = reader.result;
       };
     };
-
+          //upload รูปโปรไฟล์เข้า firebase
     const uploadProfileImage = async () => {
   try {
     const file = chooseImage.value;
@@ -57,7 +57,7 @@ export default {
       throw new Error('No image selected');
     }
 
-    const user = JSON.parse(localStorage.getItem('user')); // Get the user object from localStorage
+    const user = JSON.parse(localStorage.getItem('user')); // Get  user object from localStorage
     if (!user || !user.id) {
       throw new Error('User ID not found in localStorage');
     }
@@ -78,8 +78,7 @@ export default {
   } catch (error) {
     console.log(error);
 
-    // Handle the error here, e.g. display an error message to the user
-    // or perform additional actions based on the specific error
+    
   }
 };
 

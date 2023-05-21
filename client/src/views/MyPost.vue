@@ -35,14 +35,14 @@ export default {
     };
   },
   mounted() {
-    const user = JSON.parse(localStorage.getItem("user")); // Parse the JSON object
+    const user = JSON.parse(localStorage.getItem("user")); //  แปลง json เป็น  object 
     if (user && user.id) {
       this.userId = user.id; // Assign the user ID to the data property
       this.getPosts(this.userId);
     }
   },
   methods: {
-    async getPosts(userId) {
+    async getPosts(userId) { //ดึงโพสต์ตาม userid
       try {
         const response = await axios.get(`http://localhost:8080/api/posts?userId=${userId}`);
         this.posts = response.data.filter(post => post.userId === userId);
@@ -50,7 +50,7 @@ export default {
         console.error("Error fetching posts:", error);
       }
     },
-    async deletePost(postId) {
+    async deletePost(postId) { //ลบโพสต์
       try {
         const confirmed = await Swal.fire({
           title: "Delete Post",
@@ -80,7 +80,7 @@ export default {
         });
       }
     },
-    showPostDetails(postId) {
+    showPostDetails(postId) { //ดูdetail ของโพสต์
       const selectedPost = this.posts.find((post) => post.id === postId);
       if (selectedPost) {
         Swal.fire({

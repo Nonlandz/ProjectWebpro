@@ -77,7 +77,7 @@ export default {
     this.getPosts();
   },
   methods: {
-    async addTag() {
+    async addTag() { //สร้างtag
       try {
         const response = await axios.post("http://localhost:8080/api/tags/", {
           name: this.tagName,
@@ -96,7 +96,7 @@ export default {
         this.showAlertWithSwal("error", "Failed to add tag");
       }
     },
-    async deleteTag(tagId) {
+    async deleteTag(tagId) { //delete tag
       try {
         await axios.delete(`http://localhost:8080/api/tags/${tagId}`);
         this.tags = this.tags.filter((tag) => tag.id !== tagId);
@@ -116,7 +116,7 @@ export default {
         showConfirmButton: false,
       });
     },
-    checkAdmin() {
+    checkAdmin() {  //เช็คrole ว่าเป็น admin มั้ย
       const user = JSON.parse(localStorage.getItem("user"));
 
       if (!user || user.role !== "admin") {
@@ -124,7 +124,7 @@ export default {
         this.$router.push("/");
       }
     },
-    async getTags() {
+    async getTags() { //ดึง tag
       try {
         const response = await axios.get("http://localhost:8080/api/tags");
         this.tags = response.data;
@@ -132,7 +132,7 @@ export default {
         console.error("Error fetching tags:", error);
       }
     },
-    async getPosts() {
+    async getPosts() { //ดึงโพส
       try {
         const response = await axios.get("http://localhost:8080/api/posts");
         this.posts = response.data;
@@ -140,7 +140,7 @@ export default {
         console.error("Error fetching posts:", error);
       }
     },
-    async approvePost(postId) {
+    async approvePost(postId) { //อนุมัติโพสต์
       try {
         await axios.put(`http://localhost:8080/api/posts/${postId}`, { status: "approve" });
         const index = this.posts.findIndex((post) => post.id === postId);
@@ -153,7 +153,7 @@ export default {
         this.showAlertWithSwal("error", "Failed to approve post");
       }
     },
-    async noneApprovePost(postId) {
+    async noneApprovePost(postId) {  //ยังไม่อนุมัติโพสต์
       try {
         await axios.put(`http://localhost:8080/api/posts/${postId}`, { status: "noneApprove" });
         const index = this.posts.findIndex((post) => post.id === postId);
@@ -166,7 +166,7 @@ export default {
         this.showAlertWithSwal("error", "Failed to none approve post");
       }
     },
-    showPostDetails(post) {
+    showPostDetails(post) { //ดูดีเทลของโพสต์
       // Set the selected post
       this.selectedPost = post;
 
@@ -180,7 +180,7 @@ export default {
         `,
       });
     },
-    getStatusClass(status) {
+    getStatusClass(status) { //status ของโพสต์​
       if (status === 'approve') {
         return 'text-green-500';
       } else if (status === 'noneApprove') {
@@ -202,7 +202,7 @@ export default {
 
 h1,
 h2 {
-  color: #1E4F79; /* Change to your desired color */
+  color: #1E4F79; 
 }
 
 button {
@@ -218,7 +218,7 @@ input {
 }
 
 input:focus {
-  border-color: #1E4F79; /* Change to your desired color */
+  border-color: #1E4F79; 
   outline: none;
 }
 
@@ -233,11 +233,11 @@ input[type="text"] {
 }
 
 button.bg-blue-500 {
-  background: #1E4F79; /* Change to your desired color */
+  background: #1E4F79; 
 }
 
 button.bg-blue-500:hover {
-  background: #325d92; /* Change to your desired color */
+  background: #325d92; 
 }
 
 /* Tags and Posts list */
@@ -266,19 +266,19 @@ li.flex.items-center.mb-2 {
 }
 
 button.bg-red-500 {
-  background: #FF5A5A; /* Change to your desired color */
+  background: #FF5A5A; 
 }
 
 button.bg-red-500:hover {
-  background: #FF7878; /* Change to your desired color */
+  background: #FF7878; 
 }
 
 /* Posts section */
 button.bg-green-500 {
-  background: #47D49D; /* Change to your desired color */
+  background: #47D49D; 
 }
 
 button.bg-green-500:hover {
-  background: #5ED6A9; /* Change to your desired color */
+  background: #5ED6A9; 
 }
 </style>

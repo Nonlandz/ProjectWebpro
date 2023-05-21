@@ -180,7 +180,7 @@ export default {
   data() {
     return {
       favoritePosts: [],
-      userId: JSON.parse(localStorage.getItem("user"))?.id ?? null,
+      userId: JSON.parse(localStorage.getItem("user"))?.id ?? null,  //ดึงค่าใน localstorage
       loading: false,
     };
   },
@@ -191,7 +191,7 @@ export default {
     //this.getPost();
   },
   methods: {
-    async getFavoritePosts() {
+    async getFavoritePosts() {  //ดึงfavpost
   try {
     this.loading = true;
     const res = await axios.get(`http://localhost:8080/api/user/fav/${this.userId}`);
@@ -218,7 +218,7 @@ export default {
 },
 
 
-async fetchProfileImage(userId) {
+async fetchProfileImage(userId) { //โหลดรูป โปรไฟล์
   try {
     const starsRef = storageRef(this.storage, `users/${userId}`);
     const search = await listAll(starsRef);
@@ -235,7 +235,7 @@ async fetchProfileImage(userId) {
 
 
 
-redirectToUserProfile(userId) {
+redirectToUserProfile(userId) {  //ไปหน้า userprofile
   this.$router.push({ name: 'UserProfile', params: { userId: userId } });
 },
 
