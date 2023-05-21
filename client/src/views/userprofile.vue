@@ -1,4 +1,6 @@
 <template>
+   <Layout>
+      <Nav />
   <div class="w-full h-screen flex items-center justify-center bg-[#e5e7e9]">
     <div class="user-profile w-4/12 h-100 flex flex-col items-center justify-center content-center rounded-md shadow-md bg-white">
       <h1 class="text-3xl text-[#1E4F79] mt-4 font-bold">User Profile</h1>
@@ -15,6 +17,7 @@
       <button @click="this.$router.push('/')" class="p-5 bg-[#EB6648] text-white px-5 py-1 rounded-md mb-4 hover:bg-[#df593a] drop-shadow-lg">Back To Post</button>
     </div>
   </div>
+</Layout>
 </template>
 
 <style>
@@ -41,8 +44,17 @@
 import axios from "axios";
 import { ref as storageRef, getDownloadURL, listAll } from "firebase/storage";
 import { useFirebaseStorage } from "vuefire";
+import Layout from "../components/Layout.vue";
+import Nav from "../components/Nav.vue";
 
 export default {
+  components: {
+    Layout,
+    Nav,
+  },
+
+
+
   setup() {
     const storage = useFirebaseStorage();
     return { storage };
