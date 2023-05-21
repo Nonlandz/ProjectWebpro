@@ -34,6 +34,7 @@ CREATE TABLE `PostFav` (
     `userId` VARCHAR(191) NULL,
     `postId` VARCHAR(191) NULL,
 
+    UNIQUE INDEX `PostFav_userId_postId_key`(`userId`, `postId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -45,6 +46,7 @@ CREATE TABLE `Post` (
     `userId` VARCHAR(191) NOT NULL,
     `tagId` INTEGER NOT NULL,
     `status` ENUM('approve', 'pending', 'noneApprove') NOT NULL DEFAULT 'pending',
+    `exchangeEnded` BOOLEAN NULL DEFAULT false,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
 
@@ -72,7 +74,7 @@ CREATE TABLE `Comment` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
-ALTER TABLE `UserInfo` ADD CONSTRAINT `UserInfo_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `UserInfo` ADD CONSTRAINT `Use ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `PostFav` ADD CONSTRAINT `PostFav_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
