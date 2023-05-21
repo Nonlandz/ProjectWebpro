@@ -51,7 +51,7 @@ export default {
       },
     };
   },
-  validations() {
+  validations() { //validate
     return {
       data: {
         email: {
@@ -64,13 +64,13 @@ export default {
         },
         confirmPassword: {
           required,
-          minLength: minLength(6),
+          minLength: minLength(6), //ขั้นต่ำ6 ตัว
         },
       },
     };
   },
   methods: {
-    async showAlert(type, text) {
+    async showAlert(type, text) { //show alert
       const Toast = await this.$swal.mixin({
         toast: true,
         position: "top-end",
@@ -88,14 +88,14 @@ export default {
         title: text,
       });
     },
-    async register() {
+    async register() { //รีจีสเตอร์
       try {
         const result = await this.v$.$validate();
 
         if (!result) {
           throw new Error("Invalid data");
         }
-
+            //check password
         if (this.data.password !== this.data.confirmPassword) {
           throw new Error("Passwords do not match");
         }

@@ -460,6 +460,28 @@ async fetchCommentProfileImage(userId) {
 },
 
 
+formatTime(time) {
+  const now = new Date();
+  const timestamp = new Date(time);
+  const diff = Math.floor((now - timestamp) / 1000); // หน่วยเวลาเป็นวินาที
+
+  if (diff < 60) {
+    return 'เมื่อสักครู่';
+  } else if (diff < 3600) {
+    const minutes = Math.floor(diff / 60);
+    return `${minutes} นาทีที่แล้ว`;
+  } else if (diff < 86400) {
+    const hours = Math.floor(diff / 3600);
+    return `${hours} ชั่วโมงที่แล้ว`;
+  } else {
+    const days = Math.floor(diff / 86400);
+    return `${days} วันที่แล้ว`;
+  }
+},
+
+
+
+
 
 async endExchange(postId) {
   try {

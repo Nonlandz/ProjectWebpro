@@ -22,6 +22,7 @@
 import { ref } from 'vue';
 import { useFirebaseStorage } from 'vuefire';
 import { ref as storageRef, getDownloadURL, uploadBytes } from 'firebase/storage';
+import { useRouter } from 'vue-router';
 import Layout from "../components/Layout.vue";
 import Nav from "../components/Nav.vue";
 
@@ -35,6 +36,9 @@ export default {
     const storage = useFirebaseStorage();
     const previewImage = ref(null);
     const chooseImage = ref(null);
+
+    const router = useRouter();
+
 
     const handleImagePreview = (event) => {
       const file = event.target.files[0];
@@ -66,6 +70,7 @@ export default {
     const downloadURL = await getDownloadURL(starsRef);
     console.log('Profile image URL:', downloadURL);
 
+    router.push('/');
 
     // Reset the input and preview
     chooseImage.value = null;

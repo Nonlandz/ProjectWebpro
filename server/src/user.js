@@ -3,7 +3,7 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 const router = express.Router();
 import bcypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+import jwt from "jsonwebtoken";  //token
 import { object, string, number, date } from "yup";
 
 
@@ -22,7 +22,7 @@ router.post("/register", async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // validating
+    // validating ใช้yup
     let userSchema = object({
       email: string().email().required(),
       password: string().required(),
@@ -39,14 +39,14 @@ router.post("/register", async (req, res) => {
 
     const hash = await bcypt.hash(password, 10);
 
-    const createUser = await prisma.user.create({
+    const createUser = await prisma.user.create({    //สร้างuser
       data: {
         email: email,
         password: hash,
       },
     });
 
-    await prisma.userInfo.create({
+    await prisma.userInfo.create({      //สร้าง userinfo
       data: {
         userId: createUser.id,
       },
@@ -55,7 +55,7 @@ router.post("/register", async (req, res) => {
     delete createUser.password;
 
     const accessToken = jwt.sign(createUser, process.env.TOKEN, {
-      expiresIn: "2h",
+      expiresIn: "2h", //สร้างtoken
     });
 
     res.json({ accessToken: accessToken, user: createUser });
@@ -121,7 +121,7 @@ router.get("/posts/:id", async (req, res) => {
   }
 });
 
-
+//ลบโพส
 router.delete("/posts/:postId", async (req, res) => {
   try {
     const postId = parseInt(req.params.postId);
@@ -184,9 +184,8 @@ router.get("/fav/:id", async (req, res) => {
   }
 });
 
-// user.js
-// ...
 
+//update userinfo
 router.put("/userinfo", async (req, res) => {
   try {
     const { userId, username, firstName, lastName, phone, address } = req.body;
@@ -196,7 +195,7 @@ router.put("/userinfo", async (req, res) => {
       username: string().required(),
       firstName: string(),
       lastName: string(),
-      phone: string(),
+      phone: string(),   //use yup validate
       address: string(),
     });
 
@@ -218,7 +217,7 @@ router.put("/userinfo", async (req, res) => {
 
     res.json(updateUserInfo);
   } catch (error) {
-    if (error.code === "P2002") {
+    if (error.code === "P2002") {    //check เบอร์ กับ username
       let field = error.meta.target.includes("phone") ? "phone" : "username";
       res.status(409).json({ message: `${field} already exists` }); // Sending the error to frontend
     } else {
@@ -228,7 +227,7 @@ router.put("/userinfo", async (req, res) => {
   }
 });
 
-
+//ลืมรหัสผ่าน
 router.post("/forgotpassword", async (req, res) => {
   try {
     const { email, password, confirmPassword } = req.body;

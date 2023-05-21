@@ -106,6 +106,16 @@ async submitForm() {
       });
       return;
     }
+    
+    // Check if the phone number length is valid
+    if (this.form.phone.length > 10 || this.form.phone.length < 10) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Phone number must be 10 digits long.',
+      });
+      return;
+    }
 
     try {
       const response = await axios.put('http://localhost:8080/api/user/userinfo', this.form);
@@ -137,7 +147,8 @@ async submitForm() {
       text: 'Please fill in all fields.',
     });
   }
-},
+}
+
 
 
   }
