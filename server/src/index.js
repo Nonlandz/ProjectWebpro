@@ -15,6 +15,9 @@ app.use(cors({ origin: "*" }));
 app.use(bodyPaser.json());
 app.use(bodyPaser.urlencoded({ extended: true }));
 
+
+
+//กำหนด api
 app.use(
   "/api",
   router.use("/user", user),

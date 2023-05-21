@@ -4,7 +4,7 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 const router = express.Router();
 
-router.get("/", async (req, res) => {
+router.get("/", async (req, res) => { //ดึงค่าtag
   try {
     const tags = await prisma.tag.findMany();
     res.json(tags);
@@ -13,7 +13,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
+router.post("/", async (req, res) => { //admin สร้างtag
   try {
     const tag = await prisma.tag.create({
       data: {
@@ -26,7 +26,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", async (req, res) => {   //admin delete tag
   try {
     const { id } = req.params;
     const tag = await prisma.tag.delete({

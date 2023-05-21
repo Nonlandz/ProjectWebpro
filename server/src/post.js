@@ -3,7 +3,7 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 const router = express.Router();
 
-router.get("/", async (req, res) => {
+router.get("/", async (req, res) => {  //ดึงโพสต์มาแสดงหน้าMain
   try {
     const posts = await prisma.post.findMany({
       include: {
@@ -38,7 +38,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
+router.post("/", async (req, res) => {   //เก็บค่าตอนโพสต์
   try {
     const post = await prisma.post.create({
       data: {
@@ -55,7 +55,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.get("/fav", async (req, res) => {
+router.get("/fav", async (req, res) => {  //ดึงค่าfav
   try {
     const fav = await prisma.postFav.findMany({
       where: {
@@ -88,7 +88,7 @@ router.get("/fav", async (req, res) => {
 });
 
 
-router.get("/fav/user/:userId", async (req, res) => {
+router.get("/fav/user/:userId", async (req, res) => {   //ดึงค่าfav แต่ละ user
   try {
     const userId = req.params.userId;
 
@@ -123,7 +123,7 @@ router.get("/fav/user/:userId", async (req, res) => {
 
 
 
-router.post("/fav", async (req, res) => {
+router.post("/fav", async (req, res) => { //เวลากดlike จะไปเพิ่มตารางfav
   try {
     const fav = await prisma.postFav.create({
       data: {
@@ -138,7 +138,7 @@ router.post("/fav", async (req, res) => {
   }
 });
 
-router.delete("/fav/:id", async (req, res) => {
+router.delete("/fav/:id", async (req, res) => { //ลบค่าfav
   try {
     const fav = await prisma.postFav.delete({
       where: {
@@ -154,7 +154,7 @@ router.delete("/fav/:id", async (req, res) => {
 
 
 
-router.delete("/:id/:userId", async (req, res) => {
+router.delete("/:id/:userId", async (req, res) => { //ลบโพสต์
   try {
     const postId = req.params.id;
     const userId = req.params.userId;
@@ -202,7 +202,7 @@ router.delete("/:id/:userId", async (req, res) => {
 
 
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", async (req, res) => {  //admin update post
   try {
     const postId = req.params.id;
     const status = req.body.status;
@@ -229,7 +229,7 @@ router.put("/:id", async (req, res) => {
 
 
 
-router.put("/end-exchange/:id/:userId", async (req, res) => {
+router.put("/end-exchange/:id/:userId", async (req, res) => { //เปลี่ยนสถานะโพสต์ว่าแลกเปลี่ยนแล้ว
   try {
     const postId = req.params.id;
     const userId = req.params.userId;
