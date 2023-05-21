@@ -141,6 +141,8 @@ import { onMounted } from 'vue';
               >
                 delete
               </button>
+
+              
             </div>
           </div>
 
@@ -381,16 +383,31 @@ export default {
       if (search.items.length === 0) continue;
       const download = (await getDownloadURL(search.items[0])).toString();
       post.image = download;
+    }
 
-      const profileImageUrl = await this.fetchProfileImage(post.userId);
-      post.User.UserInfo.profileImageUrl = profileImageUrl;
+    // Fetch user profile images for all unique user IDs
+    const userIds = [...new Set(newPosts.map((post) => post.User.id))];
+    const profileImagePromises = userIds.map((userId) =>
+      this.fetchProfileImage(userId)
+    );
+    const profileImages = await Promise.all(profileImagePromises);
 
+    // Update profile images for each post
+    for (const post of newPosts) {
+      const profileImageUrl = profileImages.find(
+        (image) => image.userId === post.User.id
+      )?.url;
+      if (profileImageUrl) {
+        post.User.UserInfo.profileImageUrl = profileImageUrl;
+      }
+
+      // Update profile images for comment authors
       for (const comment of post.Comment) {
-        const commentProfileImageUrl = await this.fetchCommentProfileImage(comment.author.id);
+        const commentProfileImageUrl = await this.fetchCommentProfileImage(comment.authorId);
         comment.author.UserInfo.profileImageUrl = commentProfileImageUrl;
       }
     }
-
+    
     this.posts = newPosts;
   } catch (error) {
     console.log(error);
@@ -399,15 +416,17 @@ export default {
 
 
 
-    async fetchProfileImage(userId) {
+
+
+async fetchProfileImage(userId) {
   try {
     const starsRef = storageRef(storage, `users/${userId}`);
     const search = await listAll(starsRef);
     const downloadURL = (await getDownloadURL(search.items[0])).toString();
-    return downloadURL;
+    return { userId, url: downloadURL };
   } catch (error) {
     console.log(error);
-    return null;
+    return { userId, url: null };
   }
 },
 
@@ -667,7 +686,6 @@ saveLikedPostsToLocalStorage() {
 
 
 
-
     async filterTag(tagId) {
   try {
     console.log('Selected tag:', tagId); // Log the selected tag
@@ -684,11 +702,37 @@ saveLikedPostsToLocalStorage() {
       // Filter posts based on tagId
       newPosts = newPosts.filter((post) => post.Tag.id === +tagId);
     }
-    this.posts = newPosts; // replace existing posts with newPosts
+
+    // Fetch user profile images for all unique user IDs in the filtered posts
+    const userIds = [...new Set(newPosts.map((post) => post.User.id))];
+    const profileImagePromises = userIds.map((userId) =>
+      this.fetchProfileImage(userId)
+    );
+    const profileImages = await Promise.all(profileImagePromises);
+
+    // Update profile images for each user in the filtered posts
+    for (const post of newPosts) {
+      const profileImageUrl = profileImages.find(
+        (image) => image.userId === post.User.id
+      )?.url;
+      if (profileImageUrl) {
+        post.User.UserInfo.profileImageUrl = profileImageUrl;
+      }
+      
+      // Update profile images for comment authors
+      for (const comment of post.Comment) {
+        const commentProfileImageUrl = await this.fetchCommentProfileImage(comment.authorId);
+        comment.author.UserInfo.profileImageUrl = commentProfileImageUrl;
+      }
+    }
+
+    this.posts = newPosts; // Replace existing posts with filtered posts
   } catch (error) {
     console.log(error);
   }
 },
+
+
 
 
     checkAuth() {
