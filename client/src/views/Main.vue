@@ -93,125 +93,146 @@ import { onMounted } from 'vue';
         <div class="flex flex-col gap-y-5 mt-5 border-t pt-5 mb-10">
           <div v-for="(post, index) in posts" :key="index">
             <div class="bg-white p-5">
-<div class="flex items-center justify-between">
-<div class="flex items-center">
-  <img :src="post.User.UserInfo.profileImageUrl" class="h-10 w-10 rounded-full" alt="" />
-               <router-link
-            :to="{ name: 'UserProfile', params: { userId: post?.User?.id } }"
-            class="ml-2"
-          >
-            {{ post?.User?.UserInfo?.firstName }}
-            {{ post?.User?.UserInfo?.lastName }}
-          </router-link>
-</div>
-<span class="rounded-full px-4 bg-gray-200">{{
-              post.Tag.name
-            }}</span>
-          </div>
-          <p class="mt-5">{{ post.title }}</p>
-          <div
-            class="w-full mt-5 flex justify-center relative"
-            v-if="post.image"
-          >
-            <img :src="post?.image" class="h-[300px] w-[380px]" alt="" />
-          </div>
-          <p class="mt-5">{{ post.detail }}</p>
-          <div class="flex justify-between items-center mt-5 border-t pt-5">
-            <div class="flex gap-x-5">
-              <button @click="like(post)" class="flex items-center gap-x-2">
-                <p
-                  :class="{ like: post.like }"
-                  class="material-icons-outlined"
+              <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                  <img
+                    :src="post.User.UserInfo.profileImageUrl"
+                    class="h-10 w-10 rounded-full"
+                    alt=""
+                  />
+                  <router-link
+                    :to="{
+                      name: 'UserProfile',
+                      params: { userId: post?.User?.id },
+                    }"
+                    class="ml-2"
+                  >
+                    {{ post?.User?.UserInfo?.firstName }}
+                    {{ post?.User?.UserInfo?.lastName }}
+                  </router-link>
+                </div>
+                <span class="rounded-full px-4 bg-gray-200">{{
+                  post.Tag.name
+                }}</span>
+              </div>
+              <p class="mt-5">{{ post.title }}</p>
+              <div
+                class="w-full mt-5 flex justify-center relative"
+                v-if="post.image"
+              >
+                <img :src="post?.image" class="h-[300px] w-[380px]" alt="" />
+              </div>
+              <p class="mt-5">{{ post.detail }}</p>
+              <div class="flex justify-between items-center mt-5 border-t pt-5">
+                <div class="flex gap-x-5">
+                  <button @click="like(post)" class="flex items-center gap-x-2">
+                    <p
+                      :class="{ like: post.like }"
+                      class="material-icons-outlined"
+                    >
+                      favorite_border
+                    </p>
+                    <p>like ({{ post.UserFav.length }})</p>
+                  </button>
+                  <button
+                    @click="expandPost(post.id)"
+                    class="flex items-center gap-x-2"
+                  >
+                    <p class="material-icons-outlined">chat_bubble_outline</p>
+                    <p>comment ({{ post.Comment.length }})</p>
+                  </button>
+                  <button
+                    v-if="post.userId === userId"
+                    @click="deletePost(post.id)"
+                    class="material-icons-outlined text-red-500"
+                  >
+                    delete
+                  </button>
+                  <button
+                    v-if="post.userId === userId && !post.isSold"
+                    @click="closeSale(post.id)"
+                    class="material-icons-outlined text-green-500"
+                  >
+                    close
+                  </button>
+                </div>
+              </div>
+
+              <hr class="my-5" />
+              <div
+                v-for="(comment, commentIndex) in post.Comment"
+                :key="commentIndex"
+                class="mt-3"
+              >
+                <div class="flex items-center">
+                  <img
+                    :src="comment.author.UserInfo.profileImageUrl"
+                    class="h-10 w-10 rounded-full"
+                    alt=""
+                  />
+
+                  <router-link
+                    :to="{
+                      name: 'UserProfile',
+                      params: { userId: comment.author?.id },
+                    }"
+                    class="ml-2"
+                  >
+                    <span class="ml-2">{{
+                      comment.author?.UserInfo?.firstName || ""
+                    }}</span>
+                    <span class="ml-2">{{
+                      comment.author?.UserInfo?.lastName || ""
+                    }}</span>
+                  </router-link>
+
+                  <button
+                    v-if="comment.authorId === userId"
+                    @click="deleteComment(post.id, comment.id)"
+                    class="material-icons-outlined text-red-500"
+                  >
+                    delete
+                  </button>
+                </div>
+                <textarea
+                  v-if="comment.isEditing"
+                  v-model="comment.updatedContent"
+                  type="text"
+                  placeholder="แก้ไขความคิดเห็น..."
+                  class="focus:outline-none w-full mt-2"
+                ></textarea>
+                <p v-else class="mt-2">{{ comment.content }}</p>
+                <button
+                  v-if="comment.authorId === userId"
+                  @click="toggleEditComment(post.id, comment.id)"
+                  class="material-icons-outlined text-blue-500 ml-2"
                 >
-                  favorite_border
-                </p>
-                <p>like ({{ post.UserFav.length }})</p>
-              </button>
-              <button
-                @click="expandPost(post.id)"
-                class="flex items-center gap-x-2"
-              >
-                <p class="material-icons-outlined">chat_bubble_outline</p>
-                <p>comment ({{ post.Comment.length }})</p>
-              </button>
-              <button
-                v-if="post.userId === userId" 
-                @click="deletePost(post.id)"
-                class="material-icons-outlined text-red-500"
-              >
-                delete
-              </button>
+                  {{ comment.isEditing ? "done" : "edit" }}
+                </button>
+              </div>
+
+              <!-- Comment section -->
+              <div v-if="expandedPosts.includes(post.id)">
+                <textarea
+                  type="text"
+                  placeholder="เพิ่มความคิดเห็น..."
+                  class="focus:outline-none w-full mt-5"
+                  v-model="post.commentText"
+                ></textarea>
+                <button
+                  @click="addComment(post.id)"
+                  class="bg-[#EB6648] text-white px-5 py-1 rounded-md mt-2"
+                >
+                  โพสต์ความคิดเห็น
+                </button>
+
+                <!-- Display comments -->
+              </div>
             </div>
-          </div>
-
-          <hr class="my-5">
-          <div v-for="(comment, commentIndex) in post.Comment" :key="commentIndex" class="mt-3">
-      <div class="flex items-center">
-        <img :src="comment.author.UserInfo.profileImageUrl" class="h-10 w-10 rounded-full" alt="" />
-
-
-
-<router-link
-            :to="{ name: 'UserProfile', params: { userId: comment.author?.id } }"
-            class="ml-2"
-          >
-<span class="ml-2">{{ comment.author?.UserInfo?.firstName || '' }}</span>
-<span class="ml-2">{{ comment.author?.UserInfo?.lastName || '' }}</span>
-</router-link>
-
-<button
-      v-if="comment.authorId === userId"
-      @click="deleteComment(post.id, comment.id)"
-      class="material-icons-outlined text-red-500"
-    >
-      delete
-    </button>
-
-      </div>
-      <textarea
-  v-if="comment.isEditing"
-  v-model="comment.updatedContent"
-  type="text"
-  placeholder="แก้ไขความคิดเห็น..."
-  class="focus:outline-none w-full mt-2"
-></textarea>
-<p v-else class="mt-2">{{ comment.content }}</p>
-<button
-  v-if="comment.authorId === userId"
-  @click="toggleEditComment(post.id, comment.id)"
-  class="material-icons-outlined text-blue-500 ml-2"
->
-  {{ comment.isEditing ? 'done' : 'edit' }}
-</button>
-    </div>
-
-
-
-
-          <!-- Comment section -->
-          <div v-if="expandedPosts.includes(post.id)">
-            <textarea
-              type="text"
-              placeholder="เพิ่มความคิดเห็น..."
-              class="focus:outline-none w-full mt-5"
-              v-model="post.commentText"
-            ></textarea>
-            <button
-              @click="addComment(post.id)"
-              class="bg-[#EB6648] text-white px-5 py-1 rounded-md mt-2"
-            >
-              โพสต์ความคิดเห็น
-            </button>
-
-<!-- Display comments -->
-
-
           </div>
         </div>
       </div>
-    </div>
-  </div>
-  <!-- <button
+      <!-- <button
     @click="fetchMoreItems"
     class="mt-4 py-2 px-4 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none"
     :disabled="loading || allItemsLoaded"
@@ -229,11 +250,10 @@ import { onMounted } from 'vue';
     </span>
     <span v-else> Load More </span>
   </button> -->
-  <PostModal v-if="showingPostModal" @close="closePostModal" />
-</div>
-</Layout>
+      <PostModal v-if="showingPostModal" @close="closePostModal" />
+    </div>
+  </Layout>
 </template>
-
 
 <script>
 import Layout from "../components/Layout.vue";
@@ -253,7 +273,7 @@ const storage = useFirebaseStorage();
 export default {
   components: {
     Layout,
-    Nav
+    Nav,
   },
   data() {
     return {
@@ -271,7 +291,7 @@ export default {
       posts: [],
       userId: JSON.parse(localStorage.getItem("user"))?.id ?? null,
       expandedPosts: [],
-      profileImageUrl: '',
+      profileImageUrl: "",
     };
   },
   validations() {
@@ -371,88 +391,80 @@ export default {
     },
 
     async getPost() {
-  try {
-    const res = await axios.get("http://localhost:8080/api/posts/");
-    const newPosts = res.data.filter((post) => post.status === "approve");
+      try {
+        const res = await axios.get("http://localhost:8080/api/posts/");
+        const newPosts = res.data.filter((post) => post.status === "approve");
 
-    for (const post of newPosts) {
-      const starsRef = storageRef(storage, "posts/" + post.id);
-      const search = await listAll(starsRef);
-      if (search.items.length === 0) continue;
-      const download = (await getDownloadURL(search.items[0])).toString();
-      post.image = download;
+        for (const post of newPosts) {
+          const starsRef = storageRef(storage, "posts/" + post.id);
+          const search = await listAll(starsRef);
+          if (search.items.length === 0) continue;
+          const download = (await getDownloadURL(search.items[0])).toString();
+          post.image = download;
 
-      const profileImageUrl = await this.fetchProfileImage(post.userId);
-      post.User.UserInfo.profileImageUrl = profileImageUrl;
+          const profileImageUrl = await this.fetchProfileImage(post.userId);
+          post.User.UserInfo.profileImageUrl = profileImageUrl;
 
-      for (const comment of post.Comment) {
-        const commentProfileImageUrl = await this.fetchCommentProfileImage(comment.author.id);
-        comment.author.UserInfo.profileImageUrl = commentProfileImageUrl;
+          for (const comment of post.Comment) {
+            const commentProfileImageUrl = await this.fetchCommentProfileImage(
+              comment.author.id
+            );
+            comment.author.UserInfo.profileImageUrl = commentProfileImageUrl;
+          }
+        }
+
+        this.posts = newPosts;
+      } catch (error) {
+        console.log(error);
       }
-    }
-
-    this.posts = newPosts;
-  } catch (error) {
-    console.log(error);
-  }
-},
+    },
 
 
-
+    
     async fetchProfileImage(userId) {
-  try {
-    const starsRef = storageRef(storage, `users/${userId}`);
-    const search = await listAll(starsRef);
-    const downloadURL = (await getDownloadURL(search.items[0])).toString();
-    return downloadURL;
-  } catch (error) {
-    console.log(error);
-    return null;
-  }
-},
+      try {
+        const starsRef = storageRef(storage, `users/${userId}`);
+        const search = await listAll(starsRef);
+        const downloadURL = (await getDownloadURL(search.items[0])).toString();
+        return downloadURL;
+      } catch (error) {
+        console.log(error);
+        return null;
+      }
+    },
 
-
-
-
-async fetchCommentProfileImage(userId) {
-  try {
-    const starsRef = storageRef(storage, `users/${userId}`);
-    const search = await listAll(starsRef);
-    const downloadURL = (await getDownloadURL(search.items[0])).toString();
-    return downloadURL;
-  } catch (error) {
-    console.log(error);
-    return null;
-  }
-},
-
-
-
-
-
+    async fetchCommentProfileImage(userId) {
+      try {
+        const starsRef = storageRef(storage, `users/${userId}`);
+        const search = await listAll(starsRef);
+        const downloadURL = (await getDownloadURL(search.items[0])).toString();
+        return downloadURL;
+      } catch (error) {
+        console.log(error);
+        return null;
+      }
+    },
 
     async deleteComment(postId, commentId) {
-  try {
-    const postIndex = this.posts.findIndex((post) => post.id === postId);
-    if (postIndex > -1) {
-      const commentIndex = this.posts[postIndex].Comment.findIndex(
-        (comment) => comment.id === commentId
-      );
-      if (commentIndex > -1) {
-        const response = await axios.delete(
-          `http://localhost:8080/api/comment/${commentId}/${this.userId}`
-        );
-        this.posts[postIndex].Comment.splice(commentIndex, 1); // Remove the comment from the post's Comment array
-        this.showAlert("success", "ลบความคิดเห็นสำเร็จ");
+      try {
+        const postIndex = this.posts.findIndex((post) => post.id === postId);
+        if (postIndex > -1) {
+          const commentIndex = this.posts[postIndex].Comment.findIndex(
+            (comment) => comment.id === commentId
+          );
+          if (commentIndex > -1) {
+            const response = await axios.delete(
+              `http://localhost:8080/api/comment/${commentId}/${this.userId}`
+            );
+            this.posts[postIndex].Comment.splice(commentIndex, 1); // Remove the comment from the post's Comment array
+            this.showAlert("success", "ลบความคิดเห็นสำเร็จ");
+          }
+        }
+      } catch (error) {
+        console.log(error);
+        this.showAlert("error", "ไม่สามารถลบความคิดเห็นได้");
       }
-    }
-  } catch (error) {
-    console.log(error);
-    this.showAlert("error", "ไม่สามารถลบความคิดเห็นได้");
-  }
-},
-
-
+    },
 
     async getTag() {
       try {
@@ -463,123 +475,106 @@ async fetchCommentProfileImage(userId) {
       }
     },
 
-
-    
-  
-
-
-
     async deletePost(postId) {
-  try {
-    console.log("postId:", postId); // Log the value of postId for debugging
-    const post = this.posts.find((p) => p.id === postId); // Find the post by its ID
-    if (post.userId !== this.userId) {
-      // Check if the post doesn't belong to the user
-      throw new Error("ไม่สามารถลบโพสของผู้อื่นได้");
-    }
-    const response = await axios.delete(`http://localhost:8080/api/posts/${postId}/${this.userId}`);
-    this.posts = this.posts.filter((p) => p.id !== postId); // Remove the post from the list
+      try {
+        console.log("postId:", postId); // Log the value of postId for debugging
+        const post = this.posts.find((p) => p.id === postId); // Find the post by its ID
+        if (post.userId !== this.userId) {
+          // Check if the post doesn't belong to the user
+          throw new Error("ไม่สามารถลบโพสของผู้อื่นได้");
+        }
+        const response = await axios.delete(
+          `http://localhost:8080/api/posts/${postId}/${this.userId}`
+        );
+        this.posts = this.posts.filter((p) => p.id !== postId); // Remove the post from the list
 
-    // Check if the post is in the user's favorite posts
-    const userFavoritePost = post.UserFav.find((fav) => fav.userId === this.userId);
-    if (userFavoritePost) {
-      // If the post is in the user's favorite posts, delete it from the favorites table
-      await axios.delete(`http://localhost:8080/api/posts/fav/${userFavoritePost.id}`);
-      post.UserFav = post.UserFav.filter((fav) => fav.userId !== this.userId); // Update the UserFav array for the post
-    }
+        // Check if the post is in the user's favorite posts
+        const userFavoritePost = post.UserFav.find(
+          (fav) => fav.userId === this.userId
+        );
+        if (userFavoritePost) {
+          // If the post is in the user's favorite posts, delete it from the favorites table
+          await axios.delete(
+            `http://localhost:8080/api/posts/fav/${userFavoritePost.id}`
+          );
+          post.UserFav = post.UserFav.filter(
+            (fav) => fav.userId !== this.userId
+          ); // Update the UserFav array for the post
+        }
 
-    this.showAlert("success", "ลบโพสสำเร็จ");
-  } catch (error) {
-    console.log(error);
-    this.showAlert("error", "ไม่สามารถลบโพสได้");
-  }
-},
+        this.showAlert("success", "ลบโพสสำเร็จ");
+      } catch (error) {
+        console.log(error);
+        this.showAlert("error", "ไม่สามารถลบโพสได้");
+      }
+    },
 
+    async toggleEditComment(postId, commentId) {
+      const postIndex = this.posts.findIndex((post) => post.id === postId);
+      if (postIndex > -1) {
+        const commentIndex = this.posts[postIndex].Comment.findIndex(
+          (comment) => comment.id === commentId
+        );
+        if (commentIndex > -1) {
+          const comment = this.posts[postIndex].Comment[commentIndex];
+          if (comment.isEditing) {
+            // Update the comment content
+            try {
+              const response = await axios.put(
+                `http://localhost:8080/api/comment/${commentId}/${this.userId}`,
+                {
+                  content: comment.updatedContent,
+                }
+              );
+              this.posts[postIndex].Comment[commentIndex].content =
+                response.data.content;
+              this.posts[postIndex].Comment[commentIndex].isEditing = false;
+              this.showAlert("success", "อัปเดตความคิดเห็นสำเร็จ");
+            } catch (error) {
+              console.log(error);
+              this.showAlert("error", "ไม่สามารถแก้ไขความคิดเห็นได้");
+            }
+          } else {
+            this.posts[postIndex].Comment[commentIndex].isEditing = true;
+          }
+        }
+      }
+    },
 
-
-
-
-
-async toggleEditComment(postId, commentId) {
-  const postIndex = this.posts.findIndex((post) => post.id === postId);
-  if (postIndex > -1) {
-    const commentIndex = this.posts[postIndex].Comment.findIndex(
-      (comment) => comment.id === commentId
-    );
-    if (commentIndex > -1) {
-      const comment = this.posts[postIndex].Comment[commentIndex];
-      if (comment.isEditing) {
-        // Update the comment content
-        try {
-          const response = await axios.put(
-            `http://localhost:8080/api/comment/${commentId}/${this.userId}`,
+    async addComment(postId) {
+      try {
+        const postIndex = this.posts.findIndex((post) => post.id === postId);
+        if (postIndex > -1) {
+          const response = await axios.post(
+            "http://localhost:8080/api/comment/",
             {
-              content: comment.updatedContent,
+              content: this.posts[postIndex].commentText,
+              authorId: this.userId,
+              postId: postId,
             }
           );
-          this.posts[postIndex].Comment[commentIndex].content = response.data.content;
-          this.posts[postIndex].Comment[commentIndex].isEditing = false;
-          this.showAlert("success", "อัปเดตความคิดเห็นสำเร็จ");
-        } catch (error) {
-          console.log(error);
-          this.showAlert("error", "ไม่สามารถแก้ไขความคิดเห็นได้");
+
+          const newComment = response.data;
+          this.posts[postIndex].Comment.push(newComment);
+          this.posts[postIndex].commentText = "";
+
+          // Alert success message
+          this.$swal.fire({
+            icon: "success",
+            title: "เพิ่มความคิดเห็นสำเร็จ",
+            showConfirmButton: false,
+            timer: 1500,
+          });
+
+          // Delay the page refresh for 1 seconds
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
         }
-      } else {
-        this.posts[postIndex].Comment[commentIndex].isEditing = true;
+      } catch (error) {
+        console.log(error);
       }
-    }
-  }
-},
-
-
-
-
-
-
-
-async addComment(postId) {
-  try {
-    const postIndex = this.posts.findIndex((post) => post.id === postId);
-    if (postIndex > -1) {
-      const response = await axios.post("http://localhost:8080/api/comment/", {
-        content: this.posts[postIndex].commentText,
-        authorId: this.userId,
-        postId: postId,
-      });
-
-      const newComment = response.data;
-      this.posts[postIndex].Comment.push(newComment);
-      this.posts[postIndex].commentText = "";
-
-      // Alert success message
-      this.$swal.fire({
-        icon: "success",
-        title: "เพิ่มความคิดเห็นสำเร็จ",
-        showConfirmButton: false,
-        timer: 1500,
-      });
-
-      // Delay the page refresh for 1 seconds
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
-    }
-  } catch (error) {
-    console.log(error);
-  }
-},
-
-
-
-
-
-
-
-
-
-
-
-
+    },
 
     async like(post) {
       try {
@@ -587,13 +582,18 @@ async addComment(postId) {
         if (check) {
           // User has already liked the post, so remove the like
           await axios.delete(`http://localhost:8080/api/posts/fav/${check.id}`);
-          post.UserFav = post.UserFav.filter((fav) => fav.userId !== this.userId); // Update the UserFav array for the post
+          post.UserFav = post.UserFav.filter(
+            (fav) => fav.userId !== this.userId
+          ); // Update the UserFav array for the post
         } else {
           // User hasn't liked the post, so add the like
-          const response = await axios.post(`http://localhost:8080/api/posts/fav/`, {
-            userId: this.userId,
-            postId: post.id,
-          });
+          const response = await axios.post(
+            `http://localhost:8080/api/posts/fav/`,
+            {
+              userId: this.userId,
+              postId: post.id,
+            }
+          );
           const newFav = response.data; // The newly created UserFav object
           post.UserFav.push(newFav); // Add the new UserFav to the UserFav array for the post
         }
@@ -603,39 +603,30 @@ async addComment(postId) {
       }
     },
 
+    async getPostLikes(postId) {
+      try {
+        const res = await axios.get(
+          `http://localhost:8080/api/posts/fav?postId=${postId}`
+        );
+        return res.data;
+      } catch (error) {
+        console.log(error);
+        return [];
+      }
+    },
 
+    expandPost(postId) {
+      const index = this.expandedPosts.indexOf(postId);
+      if (index > -1) {
+        // Post is already expanded, so collapse it
+        this.expandedPosts.splice(index, 1);
+      } else {
+        // Post is not expanded, so expand it
+        this.expandedPosts.push(postId);
+      }
+    },
 
-
-async getPostLikes(postId) {
-  try {
-    const res = await axios.get(
-      `http://localhost:8080/api/posts/fav?postId=${postId}`
-    );
-    return res.data;
-  } catch (error) {
-    console.log(error);
-    return [];
-  }
-},
-
-
-
-
-expandPost(postId) {
-    const index = this.expandedPosts.indexOf(postId);
-    if (index > -1) {
-      // Post is already expanded, so collapse it
-      this.expandedPosts.splice(index, 1);
-    } else {
-      // Post is not expanded, so expand it
-      this.expandedPosts.push(postId);
-    }
-  },
-
-
-
-
-async updatePostLikes() {
+    async updatePostLikes() {
       try {
         for (const post of this.posts) {
           // No need to call getPostLikes here
@@ -646,50 +637,44 @@ async updatePostLikes() {
       }
     },
 
-saveLikedPostsToLocalStorage() {
+    saveLikedPostsToLocalStorage() {
       const likedPostIds = this.posts.reduce((ids, post) => {
         if (post.UserFav.some((fav) => fav.userId === this.userId)) {
           ids.push(post.id);
         }
         return ids;
       }, []);
-      localStorage.setItem('likedPosts', JSON.stringify(likedPostIds));
+      localStorage.setItem("likedPosts", JSON.stringify(likedPostIds));
     },
 
-
     loadLikedPostsFromLocalStorage() {
-      const likedPostIds = JSON.parse(localStorage.getItem('likedPosts')) || [];
+      const likedPostIds = JSON.parse(localStorage.getItem("likedPosts")) || [];
       for (const post of this.posts) {
         post.like = likedPostIds.includes(post.id);
       }
     },
 
-
-
-
-
     async filterTag(tagId) {
-  try {
-    console.log('Selected tag:', tagId); // Log the selected tag
-    const res = await axios.get("http://localhost:8080/api/posts/"); // Fetch all posts from the server
-    let newPosts = res.data.filter((post) => post.status === "approve");
-    for (const post of newPosts) {
-      const starsRef = storageRef(storage, "posts/" + post.id);
-      const search = await listAll(starsRef);
-      if (search.items.length === 0) continue;
-      const download = (await getDownloadURL(search.items[0])).toString();
-      post.image = download;
-    }
-    if (tagId !== "all") {
-      // Filter posts based on tagId
-      newPosts = newPosts.filter((post) => post.Tag.id === +tagId);
-    }
-    this.posts = newPosts; // replace existing posts with newPosts
-  } catch (error) {
-    console.log(error);
-  }
-},
-
+      try {
+        console.log("Selected tag:", tagId); // Log the selected tag
+        const res = await axios.get("http://localhost:8080/api/posts/"); // Fetch all posts from the server
+        let newPosts = res.data.filter((post) => post.status === "approve");
+        for (const post of newPosts) {
+          const starsRef = storageRef(storage, "posts/" + post.id);
+          const search = await listAll(starsRef);
+          if (search.items.length === 0) continue;
+          const download = (await getDownloadURL(search.items[0])).toString();
+          post.image = download;
+        }
+        if (tagId !== "all") {
+          // Filter posts based on tagId
+          newPosts = newPosts.filter((post) => post.Tag.id === +tagId);
+        }
+        this.posts = newPosts; // replace existing posts with newPosts
+      } catch (error) {
+        console.log(error);
+      }
+    },
 
     checkAuth() {
       !localStorage.getItem("token") && this.$router.push("/login");

@@ -11,14 +11,14 @@
     <div class="flex items-center justify-between">
       <div class="flex items-center">
         <img
-          src="https://picsum.photos/200"
-          class="h-10 w-10 rounded-full"
-          alt=""
-        />
-        <span class="ml-2">
-          {{ post?.Post?.User?.UserInfo?.firstName }}
-          {{ post?.Post?.User?.UserInfo?.lastName }}
-        </span>
+    :src="post?.Post?.User?.UserInfo?.profileImageUrl"
+    class="h-10 w-10 rounded-full"
+    alt=""
+  />
+        <span class="ml-2" @click="redirectToUserProfile(post?.Post?.User?.UserInfo?.userId)">
+  {{ post?.Post?.User?.UserInfo?.firstName }}
+  {{ post?.Post?.User?.UserInfo?.lastName }}
+</span>
       </div>
       <span class="rounded-full px-4 bg-gray-200">
         {{ post?.Post?.Tag?.name }}
@@ -95,22 +95,48 @@ export default {
     const res = await axios.get(`http://localhost:8080/api/user/fav/${this.userId}`);
     const favoritePosts = res.data.filter((post) => post.Post.status === 'approve');
     this.favoritePosts = favoritePosts;
-    
+
     for (const post of this.favoritePosts) {
-      const starsRef = storageRef(this.storage, "posts/" + post.postId);
+      const starsRef = storageRef(this.storage, `posts/${post.postId}`);
       const search = await listAll(starsRef);
       if (search.items.length > 0) {
         const download = await getDownloadURL(search.items[0]);
         post.image = download;
       }
+
+      const profileImageUrl = await this.fetchProfileImage(post?.Post?.User?.UserInfo?.userId);
+      post.Post.User.UserInfo.profileImageUrl = profileImageUrl;
     }
-    
+
     this.loading = false;
   } catch (error) {
     console.log(error);
     this.loading = false;
   }
 },
+
+
+async fetchProfileImage(userId) {
+  try {
+    const starsRef = storageRef(this.storage, `users/${userId}`);
+    const search = await listAll(starsRef);
+    const downloadURL = (await getDownloadURL(search.items[0])).toString();
+    return downloadURL;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+},
+
+
+
+
+
+
+redirectToUserProfile(userId) {
+  this.$router.push({ name: 'UserProfile', params: { userId: userId } });
+},
+
 
     async like(choose) {
       const post = choose.Post;
