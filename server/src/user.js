@@ -269,7 +269,7 @@ router.post("/forgotpassword", async (req, res) => {
 
 
 
-router.get("/profile/:userId", async (req, res) => {
+router.get("/profile/:userId", async (req, res) => { //ดึงuser profile
   
   try {
     

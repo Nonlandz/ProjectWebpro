@@ -70,7 +70,7 @@ export default {
       }
     }
   },
-  created() {
+  created() {   //เก็บข้อมูลเข้าlocalstorage
     const user = JSON.parse(localStorage.getItem('user'))
     if (user && user.id) {
       this.form.userId = user.id
@@ -117,7 +117,7 @@ async submitForm() {
       return;
     }
 
-    try {
+    try {   //put ข้อมูลใส่ userinfo
       const response = await axios.put('http://localhost:8080/api/user/userinfo', this.form);
       if (response.status === 200) {
         const user = JSON.parse(localStorage.getItem('user'));

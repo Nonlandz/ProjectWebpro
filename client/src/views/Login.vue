@@ -2,7 +2,9 @@
   <Layout>
     <div class="w-full h-full flex flex-grow items-center justify-center">
       <div class="w-96 border flex flex-col items-center gap-y-10 p-5 rounded-md shadow-md px-10 bg-white">
-        <h1 class="text-3xl text-slate-600 font-bold my-10">ITxChange</h1>
+        <div class="container">
+          <img src="https://cdn.discordapp.com/attachments/883221363316375583/1109963902755799140/2566-05-22_04.59.54.png" alt="ITxChange" class="w-45 h-23 rounded-full" />
+        </div>
         <div class="w-full flex flex-col items-center gap-y-3">
           <div class="flex flex-col w-full">
             <label class="text-slate-600" for="email">Email</label>
@@ -37,7 +39,7 @@ export default {
   },
   data() {
     return {
-      v$: useValidate(),
+      v$: useValidate(), //validate
       data: {
         email: "",
         password: "",
@@ -62,12 +64,12 @@ export default {
     this.checkAuth();
   },
   methods: {
-    checkAuth() {
+    checkAuth() { //เช็คtoken ว่ามีมั้ย
       if (localStorage.getItem("token")) {
         this.$router.push("/");
       }
     },
-    async showAlert(type, text) {
+    async showAlert(type, text) {    //โชว์error
       const Toast = await this.$swal.mixin({
         toast: true,
         position: "top-end",
@@ -86,7 +88,7 @@ export default {
       });
     },
 
-    async forgotPassword() {
+    async forgotPassword() {     //ลืมรหัสผ่าน
   try {
     const { value: result } = await this.$swal.fire({
       title: "Forgot Password",
@@ -100,8 +102,7 @@ export default {
         const email = document.getElementById('swal-input1').value;
         const password = document.getElementById('swal-input2').value;
         const confirmPassword = document.getElementById('swal-input3').value;
-
-        return axios.post("http://localhost:8080/api/user/forgotpassword", { 
+        return axios.post("http://localhost:8080/api/user/forgotpassword", {  //post ไปยัง forgotpass
           email, 
           password,
           confirmPassword
@@ -127,7 +128,7 @@ export default {
 
 
 async login() {
-  try {
+  try {              //vue lidate
     const result = await this.v$.$validate();
 
     if (!result) {
@@ -136,17 +137,17 @@ async login() {
 
     const res = await axios.post("http://localhost:8080/api/user/login", this.data);
 
-    localStorage.setItem("user", JSON.stringify(res.data.user));
-    localStorage.setItem("token", res.data.accessToken);
+    localStorage.setItem("user", JSON.stringify(res.data.user)); //เก็บค่า json เข้า user
+    localStorage.setItem("token", res.data.accessToken); //เก็บ token
 
-    // Check if user information is complete
+    // เช็คว่ามี username มั้ย
     if (!res.data.user.UserInfo.username) {
-      // Redirect to userinfo page if user information is not complete
+      // ถ้าไม่มี ให้ไป หน้าuserinfo
       this.$router.push("/userinfo");
       this.showAlert("info", "Please complete your user information.");
     } else {
       if (res.data.user.role === "admin") {
-        // Redirect to admin page for admin users
+        // redirect to admin page
         this.$router.push("/admin");
       } else {
         // Redirect to home page for non-admin users
@@ -164,7 +165,7 @@ async login() {
 },
 
 
-    register() {
+    register() {  //ไปหน้า register
       this.$router.push("/register");
     },
   },

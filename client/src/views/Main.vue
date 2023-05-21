@@ -37,8 +37,8 @@ import { onMounted } from 'vue';
               class="hidden"
               type="file"
               id="file"
-              @change="handleImagePreview"
-            />
+              @change="handleImagePreview"  
+            /> //preview รูปภาพ
           </div>
           <div
             :class="`w-full mt-5 flex flex-col items-end border-t ${
@@ -55,7 +55,7 @@ import { onMounted } from 'vue';
                 class="material-icons-outlined absolute -top-3 right-0 z-10 bg-white/90 rounded-full p-1 shadow-lg"
               >
                 delete
-              </button>
+              </button> //ปุ่มลบรูปโพส
             </div>
             <textarea
               type="text"
@@ -91,7 +91,7 @@ import { onMounted } from 'vue';
         </div>
         <!-- posts -->
         <div class="flex flex-col gap-y-5 mt-5 border-t pt-5 mb-10">
-          <div v-for="(post, index) in posts" :key="index">
+          <div v-for="(post, index) in posts" :key="index">   //ลูปโพส
             <div class="bg-white p-5">
 <div class="flex items-center justify-between">
 <div class="flex items-center">
@@ -120,7 +120,7 @@ import { onMounted } from 'vue';
   />
 </div>
           <p class="mt-5">{{ post.detail }}</p>
-          <p v-if="post.exchangeEnded" class="mt-2 text-red-500">อุปกรณ์ถูกแลกเปลี่ยนเรียบร้อยแล้ว</p>
+          <p v-if="post.exchangeEnded" class="mt-2 text-red-500">อุปกรณ์ถูกแลกเปลี่ยนเรียบร้อยแล้ว</p> //ปุ่มลบโพส
           <div class="flex justify-between items-center mt-5 border-t pt-5">
             <div class="flex gap-x-5">
               <button @click="like(post)" class="flex items-center gap-x-2">
@@ -160,7 +160,7 @@ import { onMounted } from 'vue';
             </div>
           </div>
 
-          <hr class="my-5">
+          <hr class="my-5">   //ลูปคอมเม้นในโพส
           <div v-for="(comment, commentIndex) in post.Comment" :key="commentIndex" class="mt-3">
       <div class="flex items-center">
         <img :src="comment.author.UserInfo.profileImageUrl" class="h-10 w-10 rounded-full" alt="" />
@@ -290,7 +290,7 @@ export default {
       profileImageUrl: '',
     };
   },
-  validations() {
+  validations() { //validate
     return {
       createPost: {
         title: {
@@ -335,7 +335,7 @@ export default {
         title: text,
       });
     },
-    async uploadFile(file, postId) {
+    async uploadFile(file, postId) {  //อัปรูปโพสต์
       try {
         const starsRef = storageRef(storage, `posts/${postId}/${file.name}`);
         await uploadBytes(starsRef, file);
@@ -343,7 +343,7 @@ export default {
         console.log(error);
       }
     },
-
+          //handle รูปพรีวิว
     handleImagePreview(event) {
       const file = event.target.files[0];
       this.chooseImage = file;
@@ -354,7 +354,7 @@ export default {
       };
     },
 
-    async addPost() {
+    async addPost() { //add post
       try {
         const result = await this.v$.$validate();
 
@@ -362,7 +362,7 @@ export default {
           throw new Error("ใส่ข้อมูลไม่ครบ");
         }
 
-        const res = await axios.post("http://localhost:8080/api/posts/", {
+        const res = await axios.post("http://localhost:8080/api/posts/", { //โพสต์ไปbackend
           ...this.createPost,
           userId: this.userId,
         });
@@ -415,7 +415,7 @@ export default {
         post.User.UserInfo.profileImageUrl = profileImageUrl;
       }
 
-      // Update profile images for comment authors
+      // Update profile images for คนมาคอมเม้น
       for (const comment of post.Comment) {
         const commentProfileImageUrl = await this.fetchCommentProfileImage(comment.authorId);
         comment.author.UserInfo.profileImageUrl = commentProfileImageUrl;
