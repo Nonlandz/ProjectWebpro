@@ -62,6 +62,10 @@ const routes = [
     component: () => import("../views/MyPost.vue"),
   },
   
+
+
+
+
 ];
 
 const router = createRouter({
