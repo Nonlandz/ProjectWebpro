@@ -3,7 +3,7 @@
     <div class="w-full h-full flex flex-grow items-center justify-center">
       <div class="w-96 border flex flex-col items-center gap-y-10 p-5 rounded-md shadow-md px-10 bg-white">
         <div class="container">
-          <img src="https://cdn.discordapp.com/attachments/883221363316375583/1109963902755799140/2566-05-22_04.59.54.png" alt="ITxChange" class="w-45 h-23 rounded-full" />
+          <img src="https://cdn.discordapp.com/attachments/883221363316375583/1109963902755799140/2566-05-22_04.59.54.png" alt="ITxChange" class="w-45 h-22 rounded-full" />
         </div>
         <div class="w-full flex flex-col items-center gap-y-3">
           <div class="flex flex-col w-full">

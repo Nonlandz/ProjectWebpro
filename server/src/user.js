@@ -2,7 +2,7 @@ import express from "express";
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 const router = express.Router();
-import bcypt from "bcryptjs";
+import bcypt from "bcryptjs"; //hashรหัส
 import jwt from "jsonwebtoken";  //token
 import { object, string, number, date } from "yup";
 
